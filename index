@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChispaNica – Juega, Aprende y Gana</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Fuente moderna -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+  <!-- Íconos (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <!-- ===== BARRA SUPERIOR ===== -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <i class="fas fa-bolt" style="color: #fbbf24;"></i>
+        <span>ChispaNica</span>
+      </div>
+      <nav class="nav-menu" id="navMenu">
+        <ul>
+          <li><a href="#inicio" class="active">Inicio</a></li>
+          <li><a href="#juegos">Juegos</a></li>
+          <li><a href="#cursos">Cursos</a></li>
+          <li><a href="#recompensas">Recompensas</a></li>
+          <li><a href="#novedades">Novedades</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <a href="#" class="btn-entrar"><i class="fas fa-user"></i> Entrar</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <h1>Juega, Aprende y Gana <span>Recompensas</span></h1>
+          <p>Participa en juegos diarios, acumula monedas, sube de nivel y desbloquea premios.</p>
+          <div class="hero-buttons">
+            <a href="#juegos" class="btn-primary">Explorar Juegos</a>
+            <a href="#recompensas" class="btn-secondary">Ver Recompensas</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="https://placehold.co/500x400/1e293b/fbbf24?text=ChispaNica" alt="ChispaNica" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTADOR DE COMUNIDAD ===== -->
+    <section class="stats">
+      <div class="container stats-grid">
+        <div class="stat-item">
+          <i class="fas fa-users"></i>
+          <span class="stat-number" data-target="12580">0</span>
+          <p>Usuarios registrados</p>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-coins"></i>
+          <span class="stat-number" data-target="987654">0</span>
+          <p>Monedas entregadas</p>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-gift"></i>
+          <span class="stat-number" data-target="3456">0</span>
+          <p>Premios reclamados</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== JUEGOS ===== -->
+    <section class="juegos" id="juegos">
+      <div class="container">
+        <h2 class="section-title">🎮 Juegos Diarios</h2>
+        <div class="juegos-grid">
+          <!-- Ruleta -->
+          <div class="juego-card">
+            <div class="juego-icon" style="background: #f59e0b;"><i class="fas fa-circle-notch"></i></div>
+            <h3>Ruleta Diaria</h3>
+            <p class="premio">💎 Hasta 50 monedas</p>
+            <div class="tiempo-restante"><i class="far fa-clock"></i> <span>2h 30m</span></div>
+            <a href="#" class="btn-participar">Participar</a>
+          </div>
+          <!-- Cofre -->
+          <div class="juego-card">
+            <div class="juego-icon" style="background: #8b5cf6;"><i class="fas fa-box-open"></i></div>
+            <h3>Cofre Diario</h3>
+            <p class="premio">🎁 10 – 100 monedas</p>
+            <div class="tiempo-restante"><i class="far fa-clock"></i> <span>5h 15m</span></div>
+            <a href="#" class="btn-participar">Participar</a>
+          </div>
+          <!-- Trivia -->
+          <div class="juego-card">
+            <div class="juego-icon" style="background: #3b82f6;"><i class="fas fa-brain"></i></div>
+            <h3>Trivia</h3>
+            <p class="premio">🧠 30 monedas + experiencia</p>
+            <div class="tiempo-restante"><i class="far fa-clock"></i> <span>12h 45m</span></div>
+            <a href="#" class="btn-participar">Participar</a>
+          </div>
+          <!-- Retos -->
+          <div class="juego-card">
+            <div class="juego-icon" style="background: #ef4444;"><i class="fas fa-trophy"></i></div>
+            <h3>Retos</h3>
+            <p class="premio">🏆 75 monedas + diamante</p>
+            <div class="tiempo-restante"><i class="far fa-clock"></i> <span>1d 4h</span></div>
+            <a href="#" class="btn-participar">Participar</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PRÓXIMAMENTE ===== -->
+    <section class="proximamente" id="cursos">
+      <div class="container">
+        <h2 class="section-title">🚀 Próximamente</h2>
+        <div class="proximamente-grid">
+          <div class="prox-card"><i class="fas fa-store"></i><h4>Tienda</h4><p>En desarrollo</p></div>
+          <div class="prox-card"><i class="fas fa-laptop"></i><h4>Servicios Digitales</h4><p>En desarrollo</p></div>
+          <div class="prox-card"><i class="fas fa-graduation-cap"></i><h4>Academia Premium</h4><p>En desarrollo</p></div>
+          <div class="prox-card"><i class="fas fa-shopping-bag"></i><h4>Marketplace</h4><p>En desarrollo</p></div>
+          <div class="prox-card"><i class="fas fa-users"></i><h4>Comunidad</h4><p>En desarrollo</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SISTEMA DE RECOMPENSAS ===== -->
+    <section class="recompensas" id="recompensas">
+      <div class="container">
+        <h2 class="section-title">💰 Sistema de Recompensas</h2>
+        <div class="recompensas-grid">
+          <div class="recompensa-item">
+            <i class="fas fa-coins" style="color: #fbbf24;"></i>
+            <h3>Monedas</h3>
+            <p>Gana monedas jugando, completando retos y con rachas diarias. 100 monedas = C$1.</p>
+          </div>
+          <div class="recompensa-item">
+            <i class="fas fa-gem" style="color: #a78bfa;"></i>
+            <h3>Diamantes</h3>
+            <p>Moneda premium para canjear recompensas exclusivas. Se obtienen en eventos y con rachas largas.</p>
+          </div>
+          <div class="recompensa-item">
+            <i class="fas fa-level-up-alt" style="color: #34d399;"></i>
+            <h3>Niveles</h3>
+            <p>Sube de nivel acumulando experiencia. Cada nivel desbloquea nuevas oportunidades y bonificaciones.</p>
+          </div>
+          <div class="recompensa-item">
+            <i class="fas fa-fire" style="color: #f97316;"></i>
+            <h3>Rachas</h3>
+            <p>Mantén rachas diarias para multiplicar tus ganancias. ¡No rompas la cadena!</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 3rem; text-align: center;">Tabla de Premios</h3>
+        <div class="tabla-premios">
+          <table>
+            <thead>
+              <tr><th>Premio</th><th>Costo (Monedas)</th><th>Costo (Diamantes)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Recarga C$1</td><td>100</td><td>—</td></tr>
+              <tr><td>Recarga C$5</td><td>500</td><td>—</td></tr>
+              <tr><td>Recarga C$10</td><td>1000</td><td>—</td></tr>
+              <tr><td>Camiseta ChispaNica</td><td>2500</td><td>5</td></tr>
+              <tr><td>Curso Premium</td><td>5000</td><td>10</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RANKING ===== -->
+    <section class="ranking" id="ranking">
+      <div class="container">
+        <h2 class="section-title">🏅 Top 10 Usuarios</h2>
+        <div class="ranking-list">
+          <div class="rank-item"><span class="rank-pos">1</span> <span class="rank-name">🔥 Juan Pérez</span> <span class="rank-score">12,450 pts</span></div>
+          <div class="rank-item"><span class="rank-pos">2</span> <span class="rank-name">⭐ María Gómez</span> <span class="rank-score">10,230 pts</span></div>
+          <div class="rank-item"><span class="rank-pos">3</span> <span class="rank-name">🚀 Carlos Ruiz</span> <span class="rank-score">9,870 pts</span></div>
+          <div class="rank-item"><span class="rank-pos">4</span> <span class="rank-name">🎯 Ana Torres</span> <span class="rank-score">8,540 pts</span></div>
+          <div class="rank-item"><span class="rank-pos">5</span> <span class="rank-name">💎 Luis Méndez</span> <span class="rank-score">7,920 pts</span></div>
+          <div class="rank-item"><span class="rank-pos">6</span> <span class="rank-name">🌟 Sofía Castro</span> <span class="rank-score">7,100 pts</span></div>
+          <div class="rank-item"><span class="rank-pos">7</span> <span class="rank-name">⚡ David Rivas</span> <span class="rank-score">6,550 pts</span></div>
+          <div class="rank-item"><span class="rank-pos">8</span> <span class="rank-name">🎮 Laura Flores</span> <span class="rank-score">5,980 pts</span></div>
+          <div class="rank-item"><span class="rank-pos">9</span> <span class="rank-name">🏆 Eduardo Silva</span> <span class="rank-score">5,470 pts</span></div>
+          <div class="rank-item"><span class="rank-pos">10</span> <span class="rank-name">🌈 Patricia Mora</span> <span class="rank-score">5,010 pts</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== NOVEDADES ===== -->
+    <section class="novedades" id="novedades">
+      <div class="container">
+        <h2 class="section-title">📢 Novedades</h2>
+        <div class="novedades-list">
+          <div class="novedad-item">
+            <span class="novedad-fecha">15 Mar 2026</span>
+            <h4>¡Lanzamiento oficial de ChispaNica!</h4>
+            <p>Ya puedes registrarte y empezar a ganar monedas con nuestros juegos diarios.</p>
+          </div>
+          <div class="novedad-item">
+            <span class="novedad-fecha">10 Mar 2026</span>
+            <h4>Nueva trivia semanal</h4>
+            <p>Pon a prueba tus conocimientos y gana hasta 50 monedas extra.</p>
+          </div>
+          <div class="novedad-item">
+            <span class="novedad-fecha">05 Mar 2026</span>
+            <h4>Racha de 7 días: ¡bonificación especial!</h4>
+            <p>Mantén tu racha y recibe un cofre sorpresa al completar la semana.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h4>ChispaNica</h4>
+        <p>Juega, aprende y gana recompensas. La comunidad que premia tu constancia.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Enlaces</h4>
+        <ul>
+          <li><a href="#">Acerca de</a></li>
+          <li><a href="#">Política de privacidad</a></li>
+          <li><a href="#">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Soporte</h4>
+        <ul>
+          <li><a href="#">Centro de ayuda</a></li>
+          <li><a href="#">Términos y condiciones</a></li>
+          <li><a href="#">Preguntas frecuentes</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ChispaNica. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- ===== PREPARADO PARA SUPABASE ===== -->
+  <!-- Clave pública de Supabase (solo referencia) -->
+  <!-- sb_publishable_qomvhRRFkvrepVZkJgAJaw_JMLuWh_t -->
+
+  <script src="script.js"></script>
+</body>
+</html>
