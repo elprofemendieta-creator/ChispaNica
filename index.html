@@ -19,6 +19,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
 </head>
 <body>
   <!-- ===== BARRA SUPERIOR ===== -->
@@ -37,8 +40,17 @@
           <li><a href="#novedades">Novedades</a></li>
         </ul>
       </nav>
-      <div class="nav-actions">
+      <div class="nav-actions" id="navActions">
+        <!-- Botón Entrar (visible cuando no hay sesión) -->
         <a href="#" class="btn-entrar" id="btnEntrar"><i class="fas fa-user"></i> Entrar</a>
+        <!-- Perfil de usuario (visible cuando hay sesión) -->
+        <div class="user-profile" id="userProfile" style="display: none;">
+          <div class="user-avatar" id="userAvatar">JD</div>
+          <span class="user-name" id="userName">Juan Díaz</span>
+          <div class="user-dropdown" id="userDropdown">
+            <button id="btnLogout"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
+          </div>
+        </div>
         <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
           <i class="fas fa-bars"></i>
         </button>
@@ -59,7 +71,7 @@
           </div>
         </div>
         <div class="hero-image">
-          <img src="https://placehold.co/500x400/1e293b/fbbf24?text=ChispaNica" alt="ChispaNica" />
+          <img src="logo.jpg" alt="ChispaNica" />
         </div>
       </div>
     </section>
@@ -278,6 +290,9 @@
           <p id="modalSubtext">Accede a tu cuenta y empieza a ganar</p>
         </div>
 
+        <!-- Mensaje de error -->
+        <div id="authError" class="auth-error" style="display: none;"></div>
+
         <!-- Formulario -->
         <form id="authForm" autocomplete="off">
           <!-- Campo nombre (solo registro) -->
@@ -314,9 +329,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Clave pública de Supabase (preparada para integración) -->
-  <!-- sb_publishable_qomvhRRFkvrepVZkJgAJaw_JMLuWh_t -->
 
   <script src="script.js"></script>
 </body>
