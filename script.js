@@ -997,3 +997,24 @@ saveProfileBtn.addEventListener('click', async () => {
     editProfileMessage.style.color = '#fca5a5';
   }
 });
+// ===== SUBIR A IMGBB =====
+async function uploadToImgbb(file) {
+  const formData = new FormData();
+  formData.append('key', 'TU_API_KEY'); // <-- Reemplaza con tu API Key
+  formData.append('image', file);
+  
+  try {
+    const response = await fetch('https://api.imgbb.com/1/upload', {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await response.json();
+    if (data.success) {
+      return data.data.url; // URL directa de la imagen
+    } else {
+      throw new Error(data.error?.message || 'Error al subir a imgbb');
+    }
+  } catch (error) {
+    throw new Error('Error de conexión con imgbb: ' + error.message);
+  }
+}
