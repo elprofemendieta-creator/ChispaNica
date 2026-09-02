@@ -14,8 +14,12 @@ const btnEntrar = document.getElementById('btnEntrar');
 const userProfile = document.getElementById('userProfile');
 const userAvatar = document.getElementById('userAvatar');
 const userName = document.getElementById('userName');
+const userCoins = document.getElementById('userCoins');
+const userDiamonds = document.getElementById('userDiamonds');
 const userDropdown = document.getElementById('userDropdown');
+const userInfo = document.getElementById('userInfo');
 const btnLogout = document.getElementById('btnLogout');
+const btnEditProfile = document.getElementById('btnEditProfile');
 
 // Modal
 const modalOverlay = document.getElementById('modalOverlay');
@@ -304,36 +308,49 @@ function showError(message) {
 }
 
 // ============================================================
-// 8. GESTIÓN DE SESIÓN Y UI
+// 8. GESTIÓN DE SESIÓN Y UI CON SALDOS
 // ============================================================
 async function loadUserProfile() {
   const { data: { session } } = await supabase.auth.getSession();
   if (session) {
     const user = session.user;
-    // Obtener perfil desde la tabla profiles
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('full_name, avatar_url')
-      .eq('id', user.id)
-      .single();
+    try {
+      // Obtener perfil y wallet en paralelo
+      const [profileResult, walletResult] = await Promise.all([
+        supabase.from('profiles').select('full_name, avatar_url').eq('id', user.id).single(),
+        supabase.from('wallets').select('coins, diamonds').eq('user_id', user.id).single()
+      ]);
 
-    if (error) {
-      console.error('Error al cargar perfil:', error);
-      return;
+      const profile = profileResult.data;
+      const wallet = walletResult.data;
+
+      if (profileResult.error) throw profileResult.error;
+      if (walletResult.error) throw walletResult.error;
+
+      const displayName = profile?.full_name || user.email || 'Usuario';
+      const avatarUrl = profile?.avatar_url || null;
+      const coins = wallet?.coins || 0;
+      const diamonds = wallet?.diamonds || 0;
+
+      updateUIForUser(displayName, avatarUrl, coins, diamonds);
+    } catch (error) {
+      console.error('Error al cargar datos del usuario:', error);
+      // Si hay error, mostrar solo el nombre
+      updateUIForUser(user.email || 'Usuario', null, 0, 0);
     }
-
-    const displayName = profile?.full_name || user.email || 'Usuario';
-    const avatarUrl = profile?.avatar_url || null;
-    updateUIForUser(displayName, avatarUrl);
   } else {
     updateUIForGuest();
   }
 }
 
-function updateUIForUser(displayName, avatarUrl) {
+function updateUIForUser(displayName, avatarUrl, coins, diamonds) {
   // Ocultar botón Entrar, mostrar perfil
   btnEntrar.style.display = 'none';
   userProfile.style.display = 'flex';
+
+  // Actualizar saldos
+  userCoins.textContent = coins.toLocaleString();
+  userDiamonds.textContent = diamonds.toLocaleString();
 
   // Iniciales del nombre
   const initials = displayName
@@ -356,7 +373,7 @@ function updateUIForUser(displayName, avatarUrl) {
   }
 
   // Abrir/cerrar dropdown al hacer clic en el perfil
-  userProfile.onclick = (e) => {
+  userInfo.onclick = (e) => {
     e.stopPropagation();
     userDropdown.classList.toggle('active');
   };
@@ -381,6 +398,12 @@ btnLogout.addEventListener('click', async () => {
     updateUIForGuest();
     userDropdown.classList.remove('active');
   }
+});
+
+// Editar perfil (por ahora solo alerta)
+btnEditProfile.addEventListener('click', () => {
+  alert('Funcionalidad de edición de perfil próximamente.');
+  userDropdown.classList.remove('active');
 });
 
 // ============================================================
