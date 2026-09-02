@@ -253,6 +253,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  try {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName } }
+  });
+  if (error) {
+    if (error.message.includes('duplicate key') || error.message.includes('already registered')) {
+      showError('❌ Este correo electrónico ya está registrado. Inicia sesión o usa otro correo.');
+    } else {
+      throw error;
+    }
+    return;
+  }
+  // ... resto del registro exitoso
+} catch (error) {
+  showError(error.message || 'Ocurrió un error. Inténtalo de nuevo.');
+}
+
   if (elements.btnRecover) {
     elements.btnRecover.addEventListener('click', async function() {
       const email = elements.recoveryEmail ? elements.recoveryEmail.value.trim() : '';
