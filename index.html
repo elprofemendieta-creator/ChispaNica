@@ -45,9 +45,20 @@
         <a href="#" class="btn-entrar" id="btnEntrar"><i class="fas fa-user"></i> Entrar</a>
         <!-- Perfil de usuario (visible cuando hay sesión) -->
         <div class="user-profile" id="userProfile" style="display: none;">
-          <div class="user-avatar" id="userAvatar">JD</div>
-          <span class="user-name" id="userName">Juan Díaz</span>
+          <!-- Saldos -->
+          <div class="user-balance">
+            <span class="balance-item"><i class="fas fa-coins" style="color: #fbbf24;"></i> <span id="userCoins">0</span></span>
+            <span class="balance-item"><i class="fas fa-gem" style="color: #a78bfa;"></i> <span id="userDiamonds">0</span></span>
+          </div>
+          <!-- Avatar y nombre -->
+          <div class="user-info" id="userInfo">
+            <div class="user-avatar" id="userAvatar">JD</div>
+            <span class="user-name" id="userName">Juan Díaz</span>
+            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: #94a3b8; margin-left: 0.3rem;"></i>
+          </div>
+          <!-- Dropdown -->
           <div class="user-dropdown" id="userDropdown">
+            <button id="btnEditProfile"><i class="fas fa-user-edit"></i> Editar perfil</button>
             <button id="btnLogout"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
           </div>
         </div>
