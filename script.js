@@ -6,7 +6,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_qomvhRRFkvrepVZkJgAJaw_JMLuWh_t';
 
 // Clave API de imgbb (reemplaza con tu propia clave)
 // Obténla en https://api.imgbb.com/
-const IMGBB_API_KEY = 'TU_API_KEY_AQUI'; 
+const IMGBB_API_KEY = 'd67ad1a46c99f2914bcaa2df0b229214'; 
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
