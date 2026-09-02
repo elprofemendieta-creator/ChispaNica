@@ -7,7 +7,6 @@
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#f97316" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,17 +15,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
 </head>
 <body>
-  <!-- ===== HEADER SUPERIOR ===== -->
+  <!-- ===== HEADER ===== -->
   <header class="app-header">
     <div class="header-container">
       <div class="header-left">
-        <div class="logo-simplified">
-          <i class="fas fa-bolt"></i>
-          <span>ChispaNica</span>
-        </div>
+        <div class="logo-simplified"><i class="fas fa-bolt"></i><span>ChispaNica</span></div>
       </div>
       <div class="header-right">
-        <div class="wallet-info" id="walletInfo">
+        <div class="wallet-info">
           <div class="wallet-item"><i class="fas fa-coins"></i><span id="userCoins">0</span></div>
           <div class="wallet-item"><i class="fas fa-gem"></i><span id="userDiamonds">0</span></div>
         </div>
@@ -34,7 +30,7 @@
           <div class="user-profile" id="userProfile" style="display:none;">
             <div class="user-avatar" id="userAvatar">U</div>
             <div class="user-dropdown" id="userDropdown">
-              <button id="btnProfile"><i class="fas fa-user"></i> Mi perfil</button>
+              <button id="btnProfile"><i class="fas fa-user-edit"></i> Mi perfil</button>
               <button id="btnLogout"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
             </div>
           </div>
@@ -45,54 +41,31 @@
   </header>
 
   <!-- ===== CONTENIDO PRINCIPAL ===== -->
-  <main class="app-main" id="mainContent">
-    <!-- PÁGINA INICIO (Hero) -->
+  <main class="app-main">
+    <!-- PÁGINA INICIO -->
     <section class="page-section active" id="page-inicio">
       <div class="hero-modern">
         <div class="hero-badge">🔥 Nueva comunidad</div>
         <h1>Aprende, <span>juega</span> y <span>conecta</span> en Nicaragua</h1>
         <p>Domina nuevas habilidades, gana recompensas y forma parte de la comunidad que está transformando el país.</p>
-        <div class="hero-image">
-          <img src="logo.jpg" alt="ChispaNica" />
-        </div>
-        <a href="#page-juegos" class="btn-hero-cta">
-          <i class="fas fa-rocket"></i> Comenzar a jugar
-        </a>
+        <div class="hero-image"><img src="logo.jpg" alt="ChispaNica" /></div>
+        <a href="#page-juegos" class="btn-hero-cta"><i class="fas fa-rocket"></i> Comenzar a jugar</a>
         <div class="hero-stats">
           <div class="hero-stat"><span class="stat-number" data-target="12580">0</span><span class="stat-label">Usuarios</span></div>
           <div class="hero-stat"><span class="stat-number" data-target="987654">0</span><span class="stat-label">Monedas</span></div>
           <div class="hero-stat"><span class="stat-number" data-target="3456">0</span><span class="stat-label">Premios</span></div>
         </div>
       </div>
-
       <!-- Juegos destacados -->
       <div class="featured-games">
         <h2>🎮 Juegos Diarios</h2>
         <div class="games-horizontal">
-          <div class="game-card-mini neon-glow">
-            <div class="game-icon" style="background:#f59e0b;"><i class="fas fa-circle-notch"></i></div>
-            <h4>Ruleta</h4>
-            <span class="game-reward">+50 monedas</span>
-          </div>
-          <div class="game-card-mini neon-glow">
-            <div class="game-icon" style="background:#8b5cf6;"><i class="fas fa-box-open"></i></div>
-            <h4>Cofre</h4>
-            <span class="game-reward">+10-100</span>
-          </div>
-          <div class="game-card-mini neon-glow">
-            <div class="game-icon" style="background:#3b82f6;"><i class="fas fa-brain"></i></div>
-            <h4>Trivia</h4>
-            <span class="game-reward">+30 monedas</span>
-          </div>
-          <div class="game-card-mini neon-glow">
-            <div class="game-icon" style="background:#ef4444;"><i class="fas fa-trophy"></i></div>
-            <h4>Retos</h4>
-            <span class="game-reward">+75 monedas</span>
-          </div>
+          <div class="game-card-mini neon-glow"><div class="game-icon" style="background:#f59e0b;"><i class="fas fa-circle-notch"></i></div><h4>Ruleta</h4><span class="game-reward">+50 monedas</span></div>
+          <div class="game-card-mini neon-glow"><div class="game-icon" style="background:#8b5cf6;"><i class="fas fa-box-open"></i></div><h4>Cofre</h4><span class="game-reward">+10-100</span></div>
+          <div class="game-card-mini neon-glow"><div class="game-icon" style="background:#3b82f6;"><i class="fas fa-brain"></i></div><h4>Trivia</h4><span class="game-reward">+30 monedas</span></div>
+          <div class="game-card-mini neon-glow"><div class="game-icon" style="background:#ef4444;"><i class="fas fa-trophy"></i></div><h4>Retos</h4><span class="game-reward">+75 monedas</span></div>
         </div>
       </div>
-
-      <!-- Próximamente con ilustraciones neón -->
       <div class="coming-soon">
         <h2>🚀 Próximamente</h2>
         <div class="coming-grid">
@@ -103,12 +76,7 @@
           <div class="coming-item neon-glow"><i class="fas fa-umbrella-beach"></i><span>Turismo</span></div>
         </div>
       </div>
-
-      <!-- Toque local -->
-      <div class="local-touch">
-        <span>🇳🇮 Hecho con ❤️ en Nicaragua</span>
-        <span>🌋 Volcán Masaya  •  ☕ Café de Matagalpa</span>
-      </div>
+      <div class="local-touch"><span>🇳🇮 Hecho con ❤️ en Nicaragua</span><span>🌋 Volcán Masaya  •  ☕ Café de Matagalpa</span></div>
     </section>
 
     <!-- PÁGINA JUEGOS -->
@@ -164,74 +132,89 @@
       </div>
     </section>
 
-    <!-- ===== PÁGINAS DOCUMENTO (Acerca, Política, Contacto) ===== -->
+    <!-- ===== PÁGINA PERFIL ===== -->
+    <section class="page-section" id="page-perfil">
+      <button class="btn-back" onclick="navigateTo('page-inicio')"><i class="fas fa-arrow-left"></i> Volver</button>
+      <div class="profile-container">
+        <div class="profile-header">
+          <div class="profile-avatar-large" id="profileAvatarLarge">
+            <span id="profileInitials">U</span>
+            <img id="profileAvatarImg" style="display:none;" alt="Avatar" />
+          </div>
+          <h2 id="profileName">Usuario</h2>
+          <p class="profile-level">Nivel <span id="profileLevel">1</span> • XP <span id="profileXp">0</span></p>
+          <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%;"></div></div>
+        </div>
+
+        <!-- Rachas -->
+        <div class="profile-stats">
+          <div class="stat-card"><i class="fas fa-fire" style="color:#f97316;"></i><span id="currentStreak">0</span><small>Racha actual</small></div>
+          <div class="stat-card"><i class="fas fa-trophy" style="color:#fbbf24;"></i><span id="bestStreak">0</span><small>Mejor racha</small></div>
+          <div class="stat-card"><i class="fas fa-coins" style="color:#fbbf24;"></i><span id="profileCoins">0</span><small>Monedas</small></div>
+          <div class="stat-card"><i class="fas fa-gem" style="color:#a78bfa;"></i><span id="profileDiamonds">0</span><small>Diamantes</small></div>
+        </div>
+
+        <!-- Editar perfil -->
+        <div class="profile-edit">
+          <h3>✏️ Editar perfil</h3>
+          <form id="profileForm">
+            <div class="form-group">
+              <i class="fas fa-user icon-input"></i>
+              <input type="text" id="editName" placeholder=" " required />
+              <label for="editName">Nombre completo</label>
+              <span class="focus-border"></span>
+            </div>
+            <div class="form-group">
+              <i class="fas fa-image icon-input"></i>
+              <input type="url" id="editAvatar" placeholder=" " />
+              <label for="editAvatar">URL del avatar (imgbb.com)</label>
+              <span class="focus-border"></span>
+            </div>
+            <button type="submit" class="btn-submit" style="background:linear-gradient(135deg,#34d399,#059669);">
+              <i class="fas fa-save"></i> Guardar cambios
+            </button>
+          </form>
+          <div id="profileMessage" style="margin-top:1rem;text-align:center;font-size:0.9rem;"></div>
+        </div>
+
+        <!-- Logros -->
+        <div class="achievements-section">
+          <h3>🏆 Logros</h3>
+          <div id="achievementsList" class="achievements-grid">
+            <!-- Se llena con JS -->
+          </div>
+        </div>
+
+        <!-- Eliminar cuenta -->
+        <div class="danger-zone">
+          <h3>⚠️ Zona de peligro</h3>
+          <button class="btn-danger" id="btnDeleteAccount"><i class="fas fa-trash"></i> Eliminar cuenta</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PÁGINAS DOCUMENTO -->
     <section class="page-section" id="page-acerca">
       <button class="btn-back" onclick="navigateTo('page-inicio')"><i class="fas fa-arrow-left"></i> Volver</button>
       <div class="doc-content">
         <h1>Acerca de ChispaNica</h1>
         <p><strong>ChispaNica</strong> es una plataforma educativa y de entretenimiento diseñada para promover el aprendizaje, el ahorro, la cultura y el turismo de Nicaragua mediante juegos, cursos, recompensas y desafíos.</p>
-        <h2>🌟 Nuestra misión</h2>
-        <p>Ayudar a las personas a aprender, ahorrar y alcanzar sus metas de manera divertida.</p>
-        <h2>👁️ Nuestra visión</h2>
-        <p>Convertirnos en la plataforma digital de referencia en el comercio y  para el desarrollo personal.</p>
-        <h2>⚙️ Funciones</h2>
-        <ul>
-          <li>🎮 Juegos educativos</li>
-          <li>📚 Cursos interactivos</li>
-          <li>💰 Sistema de recompensas</li>
-          <li>👥 Comunidad de usuarios</li>
-          <li>🛒 Tienda digital</li>
-          <li>🎯 Metas de ahorro</li>
-        </ul>
-        <div class="local-touch">🇳🇮 Hecho con ❤️ en Nicaragua</div>
+        <h2>🌟 Nuestra misión</h2><p>Ayudar a las personas a aprender, ahorrar y alcanzar sus metas de manera divertida.</p>
+        <h2>👁️ Nuestra visión</h2><p>Convertirnos en la plataforma digital de referencia para el desarrollo personal y turístico en Nicaragua.</p>
+        <h2>⚙️ Funciones</h2><ul><li>🎮 Juegos educativos</li><li>📚 Cursos interactivos</li><li>💰 Sistema de recompensas</li><li>👥 Comunidad de usuarios</li><li>🛒 Tienda digital</li><li>🎯 Metas de ahorro</li></ul>
       </div>
     </section>
 
     <section class="page-section" id="page-politica">
       <button class="btn-back" onclick="navigateTo('page-inicio')"><i class="fas fa-arrow-left"></i> Volver</button>
-      <div class="doc-content">
-        <h1>Política de Privacidad</h1>
-        <h2>📋 Información que recopilamos</h2>
-        <ul>
-          <li>Nombre</li>
-          <li>Correo electrónico</li>
-          <li>Fecha de registro</li>
-          <li>Progreso en cursos</li>
-          <li>Puntos y recompensas</li>
-        </ul>
-        <h2>🔍 Uso de la información</h2>
-        <p>Utilizamos los datos para:</p>
-        <ul>
-          <li>Gestionar cuentas</li>
-          <li>Guardar progreso</li>
-          <li>Mostrar recompensas</li>
-          <li>Mejorar la experiencia</li>
-        </ul>
-        <h2>🛡️ Protección</h2>
-        <p>Los datos son almacenados de forma segura mediante <strong>Supabase</strong>.</p>
-        <h2>⚖️ Derechos del usuario</h2>
-        <p>El usuario puede solicitar:</p>
-        <ul>
-          <li>Modificación de datos</li>
-          <li>Eliminación de cuenta</li>
-          <li>Descarga de información</li>
-        </ul>
-      </div>
+      <div class="doc-content"><h1>Política de Privacidad</h1><h2>📋 Información que recopilamos</h2><ul><li>Nombre</li><li>Correo electrónico</li><li>Fecha de registro</li><li>Progreso en cursos</li><li>Puntos y recompensas</li></ul><h2>🔍 Uso de la información</h2><p>Utilizamos los datos para gestionar cuentas, guardar progreso, mostrar recompensas y mejorar la experiencia.</p><h2>🛡️ Protección</h2><p>Los datos son almacenados de forma segura mediante <strong>Supabase</strong>.</p><h2>⚖️ Derechos del usuario</h2><p>El usuario puede solicitar modificación de datos, eliminación de cuenta y descarga de información.</p></div>
     </section>
 
     <section class="page-section" id="page-contacto">
       <button class="btn-back" onclick="navigateTo('page-inicio')"><i class="fas fa-arrow-left"></i> Volver</button>
-      <div class="doc-content">
-        <h1>Contacto</h1>
-        <div class="contact-card">
-          <p><i class="fas fa-envelope"></i> <strong>Correo:</strong> elprofemendieta@gmail.com</p>
-          <p><i class="fab fa-facebook"></i> <strong>Facebook:</strong> ChispaNica</p>
-          <p><i class="fab fa-whatsapp"></i> <strong>WhatsApp:</strong> +505 8817 0531</p>
-          <p><i class="far fa-clock"></i> <strong>Horario:</strong> Lunes a sábados, 12:00 PM - 5:00 PM</p>
-        </div>
-        <div class="local-touch">🇳🇮 ¡Estamos para ayudarte!</div>
-      </div>
+      <div class="doc-content"><h1>Contacto</h1><div class="contact-card"><p><i class="fas fa-envelope"></i> <strong>Correo:</strong> elprofemendieta@gmail.com</p><p><i class="fab fa-facebook"></i> <strong>Facebook:</strong> ChispaNica</p><p><i class="fab fa-whatsapp"></i> <strong>WhatsApp:</strong> +505 8817 0531</p><p><i class="far fa-clock"></i> <strong>Horario:</strong> Lunes a sábados, 12:00 PM - 5:00 PM</p></div></div>
     </section>
+
   </main>
 
   <!-- ===== BOTTOM NAV ===== -->
@@ -244,104 +227,40 @@
     <button class="nav-item" data-page="page-mas"><i class="fas fa-ellipsis-h"></i><span>Más</span></button>
   </nav>
 
-  <!-- ===== MODAL LOGIN / REGISTRO con recuperación ===== -->
+  <!-- ===== MODAL LOGIN ===== -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal-container">
       <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
       <div class="modal-content">
-        <div class="modal-header">
-          <div class="modal-logo"><i class="fas fa-bolt"></i><span>ChispaNica</span></div>
-          <h2 id="modalTitle">Iniciar sesión</h2>
-          <p id="modalSubtext">Accede a tu cuenta</p>
-        </div>
+        <div class="modal-header"><div class="modal-logo"><i class="fas fa-bolt"></i><span>ChispaNica</span></div><h2 id="modalTitle">Iniciar sesión</h2><p id="modalSubtext">Accede a tu cuenta</p></div>
         <div id="authError" class="auth-error" style="display:none;"></div>
-
-        <!-- Formulario principal -->
         <form id="authForm">
-          <div class="form-group" id="nameGroup" style="display:none;">
-            <i class="fas fa-user icon-input"></i>
-            <input type="text" id="nameInput" placeholder=" " />
-            <label for="nameInput">Nombre completo</label>
-            <span class="focus-border"></span>
-          </div>
-          <div class="form-group">
-            <i class="fas fa-envelope icon-input"></i>
-            <input type="email" id="emailInput" placeholder=" " required />
-            <label for="emailInput">Correo electrónico</label>
-            <span class="focus-border"></span>
-          </div>
-          <div class="form-group">
-            <i class="fas fa-lock icon-input"></i>
-            <input type="password" id="passwordInput" placeholder=" " required />
-            <label for="passwordInput">Contraseña</label>
-            <span class="focus-border"></span>
-          </div>
-          <button type="submit" class="btn-submit" id="btnSubmit">
-            <span id="btnText">Entrar</span>
-            <i class="fas fa-arrow-right" id="btnIcon"></i>
-          </button>
+          <div class="form-group" id="nameGroup" style="display:none;"><i class="fas fa-user icon-input"></i><input type="text" id="nameInput" placeholder=" " /><label for="nameInput">Nombre completo</label><span class="focus-border"></span></div>
+          <div class="form-group"><i class="fas fa-envelope icon-input"></i><input type="email" id="emailInput" placeholder=" " required /><label for="emailInput">Correo electrónico</label><span class="focus-border"></span></div>
+          <div class="form-group"><i class="fas fa-lock icon-input"></i><input type="password" id="passwordInput" placeholder=" " required /><label for="passwordInput">Contraseña</label><span class="focus-border"></span></div>
+          <button type="submit" class="btn-submit" id="btnSubmit"><span id="btnText">Entrar</span><i class="fas fa-arrow-right" id="btnIcon"></i></button>
         </form>
-
-        <!-- Enlace de recuperación -->
         <div class="modal-footer">
           <p><a href="#" id="forgotPasswordLink">¿Olvidaste tu contraseña?</a></p>
           <p id="toggleText">¿No tienes cuenta? <a href="#" id="toggleLink">Regístrate</a></p>
         </div>
-
-        <!-- Formulario de recuperación (oculto inicialmente) -->
         <div id="recoveryForm" style="display:none;">
-          <div class="form-group">
-            <i class="fas fa-envelope icon-input"></i>
-            <input type="email" id="recoveryEmail" placeholder=" " required />
-            <label for="recoveryEmail">Correo electrónico</label>
-            <span class="focus-border"></span>
-          </div>
-          <button type="button" class="btn-submit" id="btnRecover">
-            <i class="fas fa-paper-plane"></i> Enviar enlace
-          </button>
-          <div class="modal-footer">
-            <p><a href="#" id="backToLoginLink">← Volver a iniciar sesión</a></p>
-          </div>
+          <div class="form-group"><i class="fas fa-envelope icon-input"></i><input type="email" id="recoveryEmail" placeholder=" " required /><label for="recoveryEmail">Correo electrónico</label><span class="focus-border"></span></div>
+          <button type="button" class="btn-submit" id="btnRecover"><i class="fas fa-paper-plane"></i> Enviar enlace</button>
+          <div class="modal-footer"><p><a href="#" id="backToLoginLink">← Volver a iniciar sesión</a></p></div>
           <div id="recoveryMessage" style="margin-top:0.8rem;text-align:center;font-size:0.9rem;"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===== FOOTER ===== -->
   <footer class="footer">
     <div class="footer-grid">
-      <div class="footer-col">
-        <h4>ChispaNica</h4>
-        <p>Juega, aprende y gana recompensas. La comunidad que premia tu constancia.</p>
-        <div class="social-links">
-          <a href="#"><i class="fab fa-facebook-f"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="#"><i class="fab fa-youtube"></i></a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h4>Enlaces</h4>
-        <ul>
-          <li><a href="#" onclick="navigateTo('page-acerca'); return false;">Acerca de</a></li>
-          <li><a href="#" onclick="navigateTo('page-politica'); return false;">Política de privacidad</a></li>
-          <li><a href="#" onclick="navigateTo('page-contacto'); return false;">Contacto</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Soporte</h4>
-        <ul>
-          <li><a href="#">Centro de ayuda</a></li>
-          <li><a href="#">Términos y condiciones</a></li>
-          <li><a href="#">Preguntas frecuentes</a></li>
-        </ul>
-      </div>
+      <div class="footer-col"><h4>ChispaNica</h4><p>Juega, aprende y gana recompensas.</p><div class="social-links"><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-youtube"></i></a></div></div>
+      <div class="footer-col"><h4>Enlaces</h4><ul><li><a href="#" onclick="navigateTo('page-acerca'); return false;">Acerca de</a></li><li><a href="#" onclick="navigateTo('page-politica'); return false;">Política de privacidad</a></li><li><a href="#" onclick="navigateTo('page-contacto'); return false;">Contacto</a></li></ul></div>
+      <div class="footer-col"><h4>Soporte</h4><ul><li><a href="#">Centro de ayuda</a></li><li><a href="#">Términos y condiciones</a></li><li><a href="#">Preguntas frecuentes</a></li></ul></div>
     </div>
-    <div class="footer-bottom">
-      <p>&copy; 2026 ChispaNica. Todos los derechos reservados.</p>
-      <p class="local-touch">🇳🇮 Hecho con ❤️ en Nicaragua</p>
-    </div>
+    <div class="footer-bottom"><p>&copy; 2026 ChispaNica. Todos los derechos reservados.</p><p class="local-touch">🇳🇮 Hecho con ❤️ en Nicaragua</p></div>
   </footer>
 
   <script src="script.js"></script>
