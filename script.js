@@ -820,3 +820,180 @@ window.navigateTo = function(pageId) {
     loadProfileData();
   }
 };
+// ============================================================
+// 18. MODAL EDITAR PERFIL CON SUBIDA DE IMAGEN
+// ============================================================
+
+// Elementos del modal
+const editModal = document.getElementById('editProfileModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const cancelEditBtn = document.getElementById('cancelEditBtn');
+const modalProfileImage = document.getElementById('modalProfileImage');
+const uploadPhoto = document.getElementById('uploadPhoto');
+const uploadPhotoIcon = document.getElementById('uploadPhotoIcon');
+const editNameInput = document.getElementById('editNameInput');
+const saveProfileBtn = document.getElementById('saveProfileBtn');
+const editProfileMessage = document.getElementById('editProfileMessage');
+
+let tempFile = null; // Archivo temporal para la nueva foto
+
+// Abrir modal (desde el botón "Editar perfil" en la página de perfil)
+function openEditProfileModal() {
+  if (!currentUser) {
+    alert('Inicia sesión para editar tu perfil.');
+    return;
+  }
+  // Cargar datos actuales
+  editNameInput.value = document.getElementById('profileName').textContent || '';
+  // Cargar avatar actual
+  const currentAvatar = document.getElementById('profileAvatarImg').src;
+  if (currentAvatar && currentAvatar !== window.location.href) {
+    modalProfileImage.src = currentAvatar;
+  } else {
+    modalProfileImage.src = ''; // mostrar placeholder
+  }
+  tempFile = null;
+  editProfileMessage.textContent = '';
+  editProfileMessage.style.color = '';
+  editModal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+// Cerrar modal
+function closeEditModal() {
+  editModal.style.display = 'none';
+  document.body.style.overflow = 'auto';
+  uploadPhoto.value = ''; // reset
+  tempFile = null;
+  editProfileMessage.textContent = '';
+}
+
+// Eventos de apertura/cierre
+document.querySelector('.profile-edit .btn-edit-profile')?.addEventListener('click', openEditProfileModal);
+// Si no hay botón, lo creamos en la página de perfil
+
+// Cerrar con botones
+closeModalBtn.addEventListener('click', closeEditModal);
+cancelEditBtn.addEventListener('click', closeEditModal);
+editModal.addEventListener('click', (e) => {
+  if (e.target === editModal) closeEditModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && editModal.style.display === 'flex') closeEditModal();
+});
+
+// Subir foto
+uploadPhotoIcon.addEventListener('click', () => {
+  uploadPhoto.click();
+});
+
+uploadPhoto.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  // Validar tipo
+  const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'image/gif'];
+  if (!validTypes.includes(file.type)) {
+    editProfileMessage.textContent = '❌ Formato no soportado. Usa JPG, PNG o WEBP.';
+    editProfileMessage.style.color = '#fca5a5';
+    uploadPhoto.value = '';
+    return;
+  }
+  // Validar tamaño (5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    editProfileMessage.textContent = '❌ La imagen es muy grande. Máximo 5MB.';
+    editProfileMessage.style.color = '#fca5a5';
+    uploadPhoto.value = '';
+    return;
+  }
+  // Previsualizar
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    modalProfileImage.src = ev.target.result;
+    tempFile = file;
+    editProfileMessage.textContent = '📷 Foto seleccionada. Guarda los cambios.';
+    editProfileMessage.style.color = '#34d399';
+  };
+  reader.readAsDataURL(file);
+});
+
+// Guardar perfil
+saveProfileBtn.addEventListener('click', async () => {
+  const nuevoNombre = editNameInput.value.trim();
+  if (!nuevoNombre) {
+    editProfileMessage.textContent = '❌ El nombre no puede estar vacío.';
+    editProfileMessage.style.color = '#fca5a5';
+    return;
+  }
+
+  // Si no hay foto temporal, usar la actual
+  let avatarUrl = null;
+  if (tempFile) {
+    try {
+      // Subir a Supabase Storage
+      const fileName = `avatar_${currentUser.id}_${Date.now()}.${tempFile.name.split('.').pop()}`;
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, tempFile, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+      if (error) throw error;
+      // Obtener URL pública
+      const { data: publicUrlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+      avatarUrl = publicUrlData.publicUrl;
+    } catch (error) {
+      console.error('Error al subir imagen:', error);
+      editProfileMessage.textContent = '❌ Error al subir imagen: ' + error.message;
+      editProfileMessage.style.color = '#fca5a5';
+      return;
+    }
+  } else {
+    // Mantener la URL actual o null
+    const currentImg = document.getElementById('profileAvatarImg').src;
+    if (currentImg && currentImg !== window.location.href) {
+      avatarUrl = currentImg;
+    }
+  }
+
+  // Guardar en Supabase
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        full_name: nuevoNombre,
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', currentUser.id);
+
+    if (error) throw error;
+
+    editProfileMessage.textContent = '✅ Perfil actualizado correctamente.';
+    editProfileMessage.style.color = '#34d399';
+
+    // Actualizar UI
+    await loadProfileData(); // recarga todo
+    // Actualizar avatar en header
+    const initials = nuevoNombre.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('userAvatar').textContent = initials;
+    if (avatarUrl) {
+      document.getElementById('userAvatar').style.backgroundImage = `url(${avatarUrl})`;
+      document.getElementById('userAvatar').style.backgroundSize = 'cover';
+      document.getElementById('userAvatar').textContent = '';
+    } else {
+      document.getElementById('userAvatar').style.backgroundImage = '';
+      document.getElementById('userAvatar').textContent = initials;
+    }
+
+    // Cerrar modal después de 1.5s
+    setTimeout(closeEditModal, 1500);
+
+  } catch (error) {
+    console.error('Error al guardar perfil:', error);
+    editProfileMessage.textContent = '❌ ' + error.message;
+    editProfileMessage.style.color = '#fca5a5';
+  }
+});
