@@ -4,27 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>ChispaNica – Aprende, juega y conecta</title>
+  
+  <!-- Metadatos PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#f97316" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  
+  <!-- CSS -->
   <link rel="stylesheet" href="styles.css" />
+  
+  <!-- Fuentes e íconos -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
 </head>
 <body>
-  <!-- ===== HEADER ===== -->
+  <!-- ===== HEADER SUPERIOR ===== -->
   <header class="app-header">
     <div class="header-container">
       <div class="header-left">
-        <div class="logo-simplified"><i class="fas fa-bolt"></i><span>ChispaNica</span></div>
+        <div class="logo-simplified">
+          <i class="fas fa-bolt"></i>
+          <span>ChispaNica</span>
+        </div>
       </div>
       <div class="header-right">
         <div class="wallet-info">
-          <div class="wallet-item"><i class="fas fa-coins"></i><span id="userCoins">0</span></div>
-          <div class="wallet-item"><i class="fas fa-gem"></i><span id="userDiamonds">0</span></div>
+          <div class="wallet-item">
+            <i class="fas fa-coins"></i>
+            <span id="userCoins">0</span>
+          </div>
+          <div class="wallet-item">
+            <i class="fas fa-gem"></i>
+            <span id="userDiamonds">0</span>
+          </div>
         </div>
         <div class="user-section">
           <div class="user-profile" id="userProfile" style="display:none;">
@@ -42,30 +60,62 @@
 
   <!-- ===== CONTENIDO PRINCIPAL ===== -->
   <main class="app-main">
-    <!-- PÁGINA INICIO -->
+    <!-- ===== PÁGINA INICIO ===== -->
     <section class="page-section active" id="page-inicio">
       <div class="hero-modern">
         <div class="hero-badge">🔥 Nueva comunidad</div>
         <h1>Aprende, <span>juega</span> y <span>conecta</span> en Nicaragua</h1>
         <p>Domina nuevas habilidades, gana recompensas y forma parte de la comunidad que está transformando el país.</p>
-        <div class="hero-image"><img src="logo.jpg" alt="ChispaNica" /></div>
-        <a href="#page-juegos" class="btn-hero-cta"><i class="fas fa-rocket"></i> Comenzar a jugar</a>
+        <div class="hero-image">
+          <img src="logo.jpg" alt="ChispaNica" />
+        </div>
+        <a href="#page-juegos" class="btn-hero-cta">
+          <i class="fas fa-rocket"></i> Comenzar a jugar
+        </a>
         <div class="hero-stats">
-          <div class="hero-stat"><span class="stat-number" data-target="12580">0</span><span class="stat-label">Usuarios</span></div>
-          <div class="hero-stat"><span class="stat-number" data-target="987654">0</span><span class="stat-label">Monedas</span></div>
-          <div class="hero-stat"><span class="stat-number" data-target="3456">0</span><span class="stat-label">Premios</span></div>
+          <div class="hero-stat">
+            <span class="stat-number" data-target="12580">0</span>
+            <span class="stat-label">Usuarios</span>
+          </div>
+          <div class="hero-stat">
+            <span class="stat-number" data-target="987654">0</span>
+            <span class="stat-label">Monedas</span>
+          </div>
+          <div class="hero-stat">
+            <span class="stat-number" data-target="3456">0</span>
+            <span class="stat-label">Premios</span>
+          </div>
         </div>
       </div>
+
       <!-- Juegos destacados -->
       <div class="featured-games">
         <h2>🎮 Juegos Diarios</h2>
         <div class="games-horizontal">
-          <div class="game-card-mini neon-glow"><div class="game-icon" style="background:#f59e0b;"><i class="fas fa-circle-notch"></i></div><h4>Ruleta</h4><span class="game-reward">+50 monedas</span></div>
-          <div class="game-card-mini neon-glow"><div class="game-icon" style="background:#8b5cf6;"><i class="fas fa-box-open"></i></div><h4>Cofre</h4><span class="game-reward">+10-100</span></div>
-          <div class="game-card-mini neon-glow"><div class="game-icon" style="background:#3b82f6;"><i class="fas fa-brain"></i></div><h4>Trivia</h4><span class="game-reward">+30 monedas</span></div>
-          <div class="game-card-mini neon-glow"><div class="game-icon" style="background:#ef4444;"><i class="fas fa-trophy"></i></div><h4>Retos</h4><span class="game-reward">+75 monedas</span></div>
+          <div class="game-card-mini neon-glow">
+            <div class="game-icon" style="background:#f59e0b;"><i class="fas fa-circle-notch"></i></div>
+            <h4>Ruleta</h4>
+            <span class="game-reward">+50 monedas</span>
+          </div>
+          <div class="game-card-mini neon-glow">
+            <div class="game-icon" style="background:#8b5cf6;"><i class="fas fa-box-open"></i></div>
+            <h4>Cofre</h4>
+            <span class="game-reward">+10-100</span>
+          </div>
+          <div class="game-card-mini neon-glow">
+            <div class="game-icon" style="background:#3b82f6;"><i class="fas fa-brain"></i></div>
+            <h4>Trivia</h4>
+            <span class="game-reward">+30 monedas</span>
+          </div>
+          <div class="game-card-mini neon-glow">
+            <div class="game-icon" style="background:#ef4444;"><i class="fas fa-trophy"></i></div>
+            <h4>Retos</h4>
+            <span class="game-reward">+75 monedas</span>
+          </div>
         </div>
       </div>
+
+      <!-- Próximamente -->
       <div class="coming-soon">
         <h2>🚀 Próximamente</h2>
         <div class="coming-grid">
@@ -76,52 +126,147 @@
           <div class="coming-item neon-glow"><i class="fas fa-umbrella-beach"></i><span>Turismo</span></div>
         </div>
       </div>
-      <div class="local-touch"><span>🇳🇮 Hecho con ❤️ en Nicaragua</span><span>🌋 Volcán Masaya  •  ☕ Café de Matagalpa</span></div>
+
+      <div class="local-touch">
+        <span>🇳🇮 Hecho con ❤️ en Nicaragua</span>
+        <span>🌋 Volcán Masaya  •  ☕ Café de Matagalpa</span>
+      </div>
     </section>
 
-    <!-- PÁGINA JUEGOS -->
+    <!-- ===== PÁGINA JUEGOS ===== -->
     <section class="page-section" id="page-juegos">
-      <div class="section-header"><h2><i class="fas fa-gamepad"></i> Juegos</h2></div>
+      <div class="section-header">
+        <h2><i class="fas fa-gamepad"></i> Juegos</h2>
+      </div>
       <div class="games-grid-full">
-        <div class="game-card-full neon-glow"><div class="game-card-header" style="background:linear-gradient(135deg,#f59e0b,#f97316);"><i class="fas fa-circle-notch"></i><span>Ruleta Diaria</span></div><div class="game-card-body"><p>Gira la ruleta y gana hasta 50 monedas</p><button class="btn-game-play">Participar</button></div></div>
-        <div class="game-card-full neon-glow"><div class="game-card-header" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);"><i class="fas fa-box-open"></i><span>Cofre Diario</span></div><div class="game-card-body"><p>Abre el cofre y obtén 10-100 monedas</p><button class="btn-game-play">Participar</button></div></div>
-        <div class="game-card-full neon-glow"><div class="game-card-header" style="background:linear-gradient(135deg,#3b82f6,#2563eb);"><i class="fas fa-brain"></i><span>Trivia</span></div><div class="game-card-body"><p>Responde preguntas y gana 30 monedas</p><button class="btn-game-play">Participar</button></div></div>
-        <div class="game-card-full neon-glow"><div class="game-card-header" style="background:linear-gradient(135deg,#ef4444,#dc2626);"><i class="fas fa-trophy"></i><span>Retos</span></div><div class="game-card-body"><p>Completa retos y gana 75 monedas + diamante</p><button class="btn-game-play">Participar</button></div></div>
+        <div class="game-card-full neon-glow">
+          <div class="game-card-header" style="background:linear-gradient(135deg,#f59e0b,#f97316);">
+            <i class="fas fa-circle-notch"></i><span>Ruleta Diaria</span>
+          </div>
+          <div class="game-card-body">
+            <p>Gira la ruleta y gana hasta 50 monedas</p>
+            <button class="btn-game-play">Participar</button>
+          </div>
+        </div>
+        <div class="game-card-full neon-glow">
+          <div class="game-card-header" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">
+            <i class="fas fa-box-open"></i><span>Cofre Diario</span>
+          </div>
+          <div class="game-card-body">
+            <p>Abre el cofre y obtén 10-100 monedas</p>
+            <button class="btn-game-play">Participar</button>
+          </div>
+        </div>
+        <div class="game-card-full neon-glow">
+          <div class="game-card-header" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">
+            <i class="fas fa-brain"></i><span>Trivia</span>
+          </div>
+          <div class="game-card-body">
+            <p>Responde preguntas y gana 30 monedas</p>
+            <button class="btn-game-play">Participar</button>
+          </div>
+        </div>
+        <div class="game-card-full neon-glow">
+          <div class="game-card-header" style="background:linear-gradient(135deg,#ef4444,#dc2626);">
+            <i class="fas fa-trophy"></i><span>Retos</span>
+          </div>
+          <div class="game-card-body">
+            <p>Completa retos y gana 75 monedas + diamante</p>
+            <button class="btn-game-play">Participar</button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- PÁGINA CURSOS -->
+    <!-- ===== PÁGINA CURSOS ===== -->
     <section class="page-section" id="page-cursos">
-      <div class="section-header"><h2><i class="fas fa-graduation-cap"></i> Cursos</h2></div>
+      <div class="section-header">
+        <h2><i class="fas fa-graduation-cap"></i> Cursos</h2>
+      </div>
       <div class="courses-grid">
-        <div class="course-card neon-glow"><div class="course-icon"><i class="fas fa-code"></i></div><h3>Programación</h3><p>Aprende desde cero</p><span class="course-status">Próximamente</span></div>
-        <div class="course-card neon-glow"><div class="course-icon"><i class="fas fa-chart-line"></i></div><h3>Marketing Digital</h3><p>Domina herramientas</p><span class="course-status">Próximamente</span></div>
-        <div class="course-card neon-glow"><div class="course-icon"><i class="fas fa-paint-brush"></i></div><h3>Diseño UI/UX</h3><p>Crea experiencias</p><span class="course-status">Próximamente</span></div>
+        <div class="course-card neon-glow">
+          <div class="course-icon"><i class="fas fa-code"></i></div>
+          <h3>Programación</h3>
+          <p>Aprende desde cero</p>
+          <span class="course-status">Próximamente</span>
+        </div>
+        <div class="course-card neon-glow">
+          <div class="course-icon"><i class="fas fa-chart-line"></i></div>
+          <h3>Marketing Digital</h3>
+          <p>Domina herramientas</p>
+          <span class="course-status">Próximamente</span>
+        </div>
+        <div class="course-card neon-glow">
+          <div class="course-icon"><i class="fas fa-paint-brush"></i></div>
+          <h3>Diseño UI/UX</h3>
+          <p>Crea experiencias</p>
+          <span class="course-status">Próximamente</span>
+        </div>
       </div>
     </section>
 
-    <!-- PÁGINA TIENDA -->
+    <!-- ===== PÁGINA TIENDA ===== -->
     <section class="page-section" id="page-tienda">
-      <div class="section-header"><h2><i class="fas fa-store"></i> Tienda</h2></div>
+      <div class="section-header">
+        <h2><i class="fas fa-store"></i> Tienda</h2>
+      </div>
       <div class="store-grid">
-        <div class="store-item neon-glow"><div class="store-icon"><i class="fas fa-ticket-alt"></i></div><h4>Cupón C$10</h4><p>1,000 monedas</p><button class="btn-store">Canjear</button></div>
-        <div class="store-item neon-glow"><div class="store-icon"><i class="fas fa-gem"></i></div><h4>Diamante Extra</h4><p>5 diamantes</p><button class="btn-store">Canjear</button></div>
-        <div class="store-item neon-glow"><div class="store-icon"><i class="fas fa-percent"></i></div><h4>Descuento 20%</h4><p>500 monedas + 2 diamantes</p><button class="btn-store">Canjear</button></div>
+        <div class="store-item neon-glow">
+          <div class="store-icon"><i class="fas fa-ticket-alt"></i></div>
+          <h4>Cupón C$10</h4>
+          <p>1,000 monedas</p>
+          <button class="btn-store">Canjear</button>
+        </div>
+        <div class="store-item neon-glow">
+          <div class="store-icon"><i class="fas fa-gem"></i></div>
+          <h4>Diamante Extra</h4>
+          <p>5 diamantes</p>
+          <button class="btn-store">Canjear</button>
+        </div>
+        <div class="store-item neon-glow">
+          <div class="store-icon"><i class="fas fa-percent"></i></div>
+          <h4>Descuento 20%</h4>
+          <p>500 monedas + 2 diamantes</p>
+          <button class="btn-store">Canjear</button>
+        </div>
       </div>
     </section>
 
-    <!-- PÁGINA COMUNIDAD -->
+    <!-- ===== PÁGINA COMUNIDAD ===== -->
     <section class="page-section" id="page-comunidad">
-      <div class="section-header"><h2><i class="fas fa-users"></i> Comunidad</h2></div>
+      <div class="section-header">
+        <h2><i class="fas fa-users"></i> Comunidad</h2>
+      </div>
       <div class="community-content">
-        <div class="community-card neon-glow"><i class="fas fa-trophy" style="font-size:3rem;color:#fbbf24;"></i><h3>Ranking</h3><div class="ranking-list"><div class="rank-item"><span class="rank-pos">1</span> Juan Pérez <span class="rank-score">12,450 pts</span></div><div class="rank-item"><span class="rank-pos">2</span> María Gómez <span class="rank-score">10,230 pts</span></div><div class="rank-item"><span class="rank-pos">3</span> Carlos Ruiz <span class="rank-score">9,870 pts</span></div></div></div>
-        <div class="community-card neon-glow"><i class="fas fa-newspaper" style="font-size:3rem;color:#f97316;"></i><h3>Novedades</h3><div class="news-item"><span class="news-date">15 Mar</span><p>¡Lanzamiento oficial!</p></div><div class="news-item"><span class="news-date">10 Mar</span><p>Nueva trivia semanal</p></div></div>
+        <div class="community-card neon-glow">
+          <i class="fas fa-trophy" style="font-size:3rem;color:#fbbf24;"></i>
+          <h3>Ranking</h3>
+          <div class="ranking-list">
+            <div class="rank-item"><span class="rank-pos">1</span> Juan Pérez <span class="rank-score">12,450 pts</span></div>
+            <div class="rank-item"><span class="rank-pos">2</span> María Gómez <span class="rank-score">10,230 pts</span></div>
+            <div class="rank-item"><span class="rank-pos">3</span> Carlos Ruiz <span class="rank-score">9,870 pts</span></div>
+          </div>
+        </div>
+        <div class="community-card neon-glow">
+          <i class="fas fa-newspaper" style="font-size:3rem;color:#f97316;"></i>
+          <h3>Novedades</h3>
+          <div class="news-item">
+            <span class="news-date">15 Mar</span>
+            <p>¡Lanzamiento oficial!</p>
+          </div>
+          <div class="news-item">
+            <span class="news-date">10 Mar</span>
+            <p>Nueva trivia semanal</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- PÁGINA MÁS -->
+    <!-- ===== PÁGINA MÁS ===== -->
     <section class="page-section" id="page-mas">
-      <div class="section-header"><h2><i class="fas fa-ellipsis-h"></i> Más</h2></div>
+      <div class="section-header">
+        <h2><i class="fas fa-ellipsis-h"></i> Más</h2>
+      </div>
       <div class="more-grid">
         <div class="more-item neon-glow" data-page="page-acerca"><i class="fas fa-info-circle"></i> Acerca de</div>
         <div class="more-item neon-glow" data-page="page-politica"><i class="fas fa-shield-alt"></i> Política</div>
@@ -134,7 +279,9 @@
 
     <!-- ===== PÁGINA PERFIL ===== -->
     <section class="page-section" id="page-perfil">
-      <button class="btn-back" onclick="navigateTo('page-inicio')"><i class="fas fa-arrow-left"></i> Volver</button>
+      <button class="btn-back" onclick="window.navigateTo('page-inicio')">
+        <i class="fas fa-arrow-left"></i> Volver
+      </button>
       <div class="profile-container">
         <div class="profile-header">
           <div class="profile-avatar-large" id="profileAvatarLarge">
@@ -146,7 +293,7 @@
           <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%;"></div></div>
         </div>
 
-        <!-- Rachas -->
+        <!-- Estadísticas -->
         <div class="profile-stats">
           <div class="stat-card"><i class="fas fa-fire" style="color:#f97316;"></i><span id="currentStreak">0</span><small>Racha actual</small></div>
           <div class="stat-card"><i class="fas fa-trophy" style="color:#fbbf24;"></i><span id="bestStreak">0</span><small>Mejor racha</small></div>
@@ -157,24 +304,10 @@
         <!-- Editar perfil -->
         <div class="profile-edit">
           <h3>✏️ Editar perfil</h3>
-          <form id="profileForm">
-            <div class="form-group">
-              <i class="fas fa-user icon-input"></i>
-              <input type="text" id="editName" placeholder=" " required />
-              <label for="editName">Nombre completo</label>
-              <span class="focus-border"></span>
-            </div>
-            <div class="form-group">
-              <i class="fas fa-image icon-input"></i>
-              <input type="url" id="editAvatar" placeholder=" " />
-              <label for="editAvatar">URL del avatar (imgbb.com)</label>
-              <span class="focus-border"></span>
-            </div>
-            <button type="submit" class="btn-submit" style="background:linear-gradient(135deg,#34d399,#059669);">
-              <i class="fas fa-save"></i> Guardar cambios
-            </button>
-          </form>
-          <div id="profileMessage" style="margin-top:1rem;text-align:center;font-size:0.9rem;"></div>
+          <button class="btn-edit-profile" id="btnEditProfile">
+            <i class="fas fa-pen"></i> Editar mi perfil
+          </button>
+          <div id="profileMessage" style="margin-top:0.5rem; text-align:center; font-size:0.9rem;"></div>
         </div>
 
         <!-- Logros -->
@@ -193,115 +326,252 @@
       </div>
     </section>
 
-    <!-- PÁGINAS DOCUMENTO -->
+    <!-- ===== PÁGINA ACERCA DE ===== -->
     <section class="page-section" id="page-acerca">
-      <button class="btn-back" onclick="navigateTo('page-inicio')"><i class="fas fa-arrow-left"></i> Volver</button>
+      <button class="btn-back" onclick="window.navigateTo('page-inicio')">
+        <i class="fas fa-arrow-left"></i> Volver
+      </button>
       <div class="doc-content">
         <h1>Acerca de ChispaNica</h1>
         <p><strong>ChispaNica</strong> es una plataforma educativa y de entretenimiento diseñada para promover el aprendizaje, el ahorro, la cultura y el turismo de Nicaragua mediante juegos, cursos, recompensas y desafíos.</p>
-        <h2>🌟 Nuestra misión</h2><p>Ayudar a las personas a aprender, ahorrar y alcanzar sus metas de manera divertida.</p>
-        <h2>👁️ Nuestra visión</h2><p>Convertirnos en la plataforma digital de referencia para el desarrollo personal y turístico en Nicaragua.</p>
-        <h2>⚙️ Funciones</h2><ul><li>🎮 Juegos educativos</li><li>📚 Cursos interactivos</li><li>💰 Sistema de recompensas</li><li>👥 Comunidad de usuarios</li><li>🛒 Tienda digital</li><li>🎯 Metas de ahorro</li></ul>
+        <h2>🌟 Nuestra misión</h2>
+        <p>Ayudar a las personas a aprender, ahorrar y alcanzar sus metas de manera divertida.</p>
+        <h2>👁️ Nuestra visión</h2>
+        <p>Convertirnos en la plataforma digital de referencia para el desarrollo personal y turístico en Nicaragua.</p>
+        <h2>⚙️ Funciones</h2>
+        <ul>
+          <li>🎮 Juegos educativos</li>
+          <li>📚 Cursos interactivos</li>
+          <li>💰 Sistema de recompensas</li>
+          <li>👥 Comunidad de usuarios</li>
+          <li>🛒 Tienda digital</li>
+          <li>🎯 Metas de ahorro</li>
+        </ul>
       </div>
     </section>
 
+    <!-- ===== PÁGINA POLÍTICA DE PRIVACIDAD ===== -->
     <section class="page-section" id="page-politica">
-      <button class="btn-back" onclick="navigateTo('page-inicio')"><i class="fas fa-arrow-left"></i> Volver</button>
-      <div class="doc-content"><h1>Política de Privacidad</h1><h2>📋 Información que recopilamos</h2><ul><li>Nombre</li><li>Correo electrónico</li><li>Fecha de registro</li><li>Progreso en cursos</li><li>Puntos y recompensas</li></ul><h2>🔍 Uso de la información</h2><p>Utilizamos los datos para gestionar cuentas, guardar progreso, mostrar recompensas y mejorar la experiencia.</p><h2>🛡️ Protección</h2><p>Los datos son almacenados de forma segura mediante <strong>Supabase</strong>.</p><h2>⚖️ Derechos del usuario</h2><p>El usuario puede solicitar modificación de datos, eliminación de cuenta y descarga de información.</p></div>
+      <button class="btn-back" onclick="window.navigateTo('page-inicio')">
+        <i class="fas fa-arrow-left"></i> Volver
+      </button>
+      <div class="doc-content">
+        <h1>Política de Privacidad</h1>
+        <h2>📋 Información que recopilamos</h2>
+        <ul>
+          <li>Nombre</li>
+          <li>Correo electrónico</li>
+          <li>Fecha de registro</li>
+          <li>Progreso en cursos</li>
+          <li>Puntos y recompensas</li>
+        </ul>
+        <h2>🔍 Uso de la información</h2>
+        <p>Utilizamos los datos para:</p>
+        <ul>
+          <li>Gestionar cuentas</li>
+          <li>Guardar progreso</li>
+          <li>Mostrar recompensas</li>
+          <li>Mejorar la experiencia</li>
+        </ul>
+        <h2>🛡️ Protección</h2>
+        <p>Los datos son almacenados de forma segura mediante <strong>Supabase</strong>.</p>
+        <h2>⚖️ Derechos del usuario</h2>
+        <p>El usuario puede solicitar:</p>
+        <ul>
+          <li>Modificación de datos</li>
+          <li>Eliminación de cuenta</li>
+          <li>Descarga de información</li>
+        </ul>
+      </div>
     </section>
 
+    <!-- ===== PÁGINA CONTACTO ===== -->
     <section class="page-section" id="page-contacto">
-      <button class="btn-back" onclick="navigateTo('page-inicio')"><i class="fas fa-arrow-left"></i> Volver</button>
-      <div class="doc-content"><h1>Contacto</h1><div class="contact-card"><p><i class="fas fa-envelope"></i> <strong>Correo:</strong> elprofemendieta@gmail.com</p><p><i class="fab fa-facebook"></i> <strong>Facebook:</strong> ChispaNica</p><p><i class="fab fa-whatsapp"></i> <strong>WhatsApp:</strong> +505 8817 0531</p><p><i class="far fa-clock"></i> <strong>Horario:</strong> Lunes a sábados, 12:00 PM - 5:00 PM</p></div></div>
+      <button class="btn-back" onclick="window.navigateTo('page-inicio')">
+        <i class="fas fa-arrow-left"></i> Volver
+      </button>
+      <div class="doc-content">
+        <h1>Contacto</h1>
+        <div class="contact-card">
+          <p><i class="fas fa-envelope"></i> <strong>Correo:</strong> elprofemendieta@gmail.com</p>
+          <p><i class="fab fa-facebook"></i> <strong>Facebook:</strong> ChispaNica</p>
+          <p><i class="fab fa-whatsapp"></i> <strong>WhatsApp:</strong> +505 8817 0531</p>
+          <p><i class="far fa-clock"></i> <strong>Horario:</strong> Lunes a sábados, 12:00 PM - 5:00 PM</p>
+        </div>
+      </div>
     </section>
-
   </main>
 
-  <!-- ===== BOTTOM NAV ===== -->
+  <!-- ===== BOTTOM NAVIGATION BAR ===== -->
   <nav class="bottom-nav">
-    <button class="nav-item active" data-page="page-inicio"><i class="fas fa-home"></i><span>Inicio</span></button>
-    <button class="nav-item" data-page="page-juegos"><i class="fas fa-gamepad"></i><span>Juegos</span></button>
-    <button class="nav-item" data-page="page-cursos"><i class="fas fa-graduation-cap"></i><span>Cursos</span></button>
-    <button class="nav-item" data-page="page-tienda"><i class="fas fa-store"></i><span>Tienda</span></button>
-    <button class="nav-item" data-page="page-comunidad"><i class="fas fa-users"></i><span>Comunidad</span></button>
-    <button class="nav-item" data-page="page-mas"><i class="fas fa-ellipsis-h"></i><span>Más</span></button>
+    <button class="nav-item active" data-page="page-inicio">
+      <i class="fas fa-home"></i>
+      <span>Inicio</span>
+    </button>
+    <button class="nav-item" data-page="page-juegos">
+      <i class="fas fa-gamepad"></i>
+      <span>Juegos</span>
+    </button>
+    <button class="nav-item" data-page="page-cursos">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Cursos</span>
+    </button>
+    <button class="nav-item" data-page="page-tienda">
+      <i class="fas fa-store"></i>
+      <span>Tienda</span>
+    </button>
+    <button class="nav-item" data-page="page-comunidad">
+      <i class="fas fa-users"></i>
+      <span>Comunidad</span>
+    </button>
+    <button class="nav-item" data-page="page-mas">
+      <i class="fas fa-ellipsis-h"></i>
+      <span>Más</span>
+    </button>
   </nav>
 
-  <!-- ===== MODAL LOGIN ===== -->
+  <!-- ===== MODAL LOGIN / REGISTRO ===== -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal-container">
       <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
       <div class="modal-content">
-        <div class="modal-header"><div class="modal-logo"><i class="fas fa-bolt"></i><span>ChispaNica</span></div><h2 id="modalTitle">Iniciar sesión</h2><p id="modalSubtext">Accede a tu cuenta</p></div>
+        <div class="modal-header">
+          <div class="modal-logo">
+            <i class="fas fa-bolt"></i>
+            <span>ChispaNica</span>
+          </div>
+          <h2 id="modalTitle">Iniciar sesión</h2>
+          <p id="modalSubtext">Accede a tu cuenta</p>
+        </div>
         <div id="authError" class="auth-error" style="display:none;"></div>
         <form id="authForm">
-          <div class="form-group" id="nameGroup" style="display:none;"><i class="fas fa-user icon-input"></i><input type="text" id="nameInput" placeholder=" " /><label for="nameInput">Nombre completo</label><span class="focus-border"></span></div>
-          <div class="form-group"><i class="fas fa-envelope icon-input"></i><input type="email" id="emailInput" placeholder=" " required /><label for="emailInput">Correo electrónico</label><span class="focus-border"></span></div>
-          <div class="form-group"><i class="fas fa-lock icon-input"></i><input type="password" id="passwordInput" placeholder=" " required /><label for="passwordInput">Contraseña</label><span class="focus-border"></span></div>
-          <button type="submit" class="btn-submit" id="btnSubmit"><span id="btnText">Entrar</span><i class="fas fa-arrow-right" id="btnIcon"></i></button>
+          <div class="form-group" id="nameGroup" style="display:none;">
+            <i class="fas fa-user icon-input"></i>
+            <input type="text" id="nameInput" placeholder=" " />
+            <label for="nameInput">Nombre completo</label>
+            <span class="focus-border"></span>
+          </div>
+          <div class="form-group">
+            <i class="fas fa-envelope icon-input"></i>
+            <input type="email" id="emailInput" placeholder=" " required />
+            <label for="emailInput">Correo electrónico</label>
+            <span class="focus-border"></span>
+          </div>
+          <div class="form-group">
+            <i class="fas fa-lock icon-input"></i>
+            <input type="password" id="passwordInput" placeholder=" " required />
+            <label for="passwordInput">Contraseña</label>
+            <span class="focus-border"></span>
+          </div>
+          <button type="submit" class="btn-submit" id="btnSubmit">
+            <span id="btnText">Entrar</span>
+            <i class="fas fa-arrow-right" id="btnIcon"></i>
+          </button>
         </form>
         <div class="modal-footer">
           <p><a href="#" id="forgotPasswordLink">¿Olvidaste tu contraseña?</a></p>
           <p id="toggleText">¿No tienes cuenta? <a href="#" id="toggleLink">Regístrate</a></p>
         </div>
         <div id="recoveryForm" style="display:none;">
-          <div class="form-group"><i class="fas fa-envelope icon-input"></i><input type="email" id="recoveryEmail" placeholder=" " required /><label for="recoveryEmail">Correo electrónico</label><span class="focus-border"></span></div>
-          <button type="button" class="btn-submit" id="btnRecover"><i class="fas fa-paper-plane"></i> Enviar enlace</button>
-          <div class="modal-footer"><p><a href="#" id="backToLoginLink">← Volver a iniciar sesión</a></p></div>
-          <div id="recoveryMessage" style="margin-top:0.8rem;text-align:center;font-size:0.9rem;"></div>
+          <div class="form-group">
+            <i class="fas fa-envelope icon-input"></i>
+            <input type="email" id="recoveryEmail" placeholder=" " required />
+            <label for="recoveryEmail">Correo electrónico</label>
+            <span class="focus-border"></span>
+          </div>
+          <button type="button" class="btn-submit" id="btnRecover">
+            <i class="fas fa-paper-plane"></i> Enviar enlace
+          </button>
+          <div class="modal-footer">
+            <p><a href="#" id="backToLoginLink">← Volver a iniciar sesión</a></p>
+          </div>
+          <div id="recoveryMessage" style="margin-top:0.8rem; text-align:center; font-size:0.9rem;"></div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- ===== MODAL EDITAR PERFIL ===== -->
+  <div id="editProfileModal" class="modal-overlay" style="display:none;">
+    <div class="modal-container modal-edit">
+      <button class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></button>
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-logo">
+            <i class="fas fa-user-edit"></i>
+            <span>Editar perfil</span>
+          </div>
+        </div>
+
+        <!-- Foto de perfil -->
+        <div class="profile-pic-edit">
+          <img id="modalProfileImage" src="" alt="Foto de perfil" />
+          <div class="camera-icon" id="uploadPhotoIcon">
+            <i class="fas fa-camera"></i>
+          </div>
+        </div>
+        <input type="file" id="uploadPhoto" accept="image/*" style="display: none;" />
+
+        <!-- Nombre -->
+        <div class="form-group" style="margin-top:1rem;">
+          <i class="fas fa-user icon-input"></i>
+          <input type="text" id="editNameInput" placeholder=" " />
+          <label for="editNameInput">Nombre completo</label>
+          <span class="focus-border"></span>
+        </div>
+
+        <!-- Botones -->
+        <div style="display:flex; gap:0.8rem; margin-top:1.5rem;">
+          <button class="btn-submit" id="saveProfileBtn" style="flex:1;">
+            <i class="fas fa-save"></i> Guardar cambios
+          </button>
+          <button class="btn-submit" id="cancelEditBtn" style="flex:1; background:#475569;">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+        </div>
+
+        <div id="editProfileMessage" style="margin-top:1rem; text-align:center; font-size:0.9rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
   <footer class="footer">
     <div class="footer-grid">
-      <div class="footer-col"><h4>ChispaNica</h4><p>Juega, aprende y gana recompensas.</p><div class="social-links"><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-youtube"></i></a></div></div>
-      <div class="footer-col"><h4>Enlaces</h4><ul><li><a href="#" onclick="navigateTo('page-acerca'); return false;">Acerca de</a></li><li><a href="#" onclick="navigateTo('page-politica'); return false;">Política de privacidad</a></li><li><a href="#" onclick="navigateTo('page-contacto'); return false;">Contacto</a></li></ul></div>
-      <div class="footer-col"><h4>Soporte</h4><ul><li><a href="#">Centro de ayuda</a></li><li><a href="#">Términos y condiciones</a></li><li><a href="#">Preguntas frecuentes</a></li></ul></div>
+      <div class="footer-col">
+        <h4>ChispaNica</h4>
+        <p>Juega, aprende y gana recompensas. La comunidad que premia tu constancia.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Enlaces</h4>
+        <ul>
+          <li><a href="#" onclick="window.navigateTo('page-acerca'); return false;">Acerca de</a></li>
+          <li><a href="#" onclick="window.navigateTo('page-politica'); return false;">Política de privacidad</a></li>
+          <li><a href="#" onclick="window.navigateTo('page-contacto'); return false;">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Soporte</h4>
+        <ul>
+          <li><a href="#">Centro de ayuda</a></li>
+          <li><a href="#">Términos y condiciones</a></li>
+          <li><a href="#">Preguntas frecuentes</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="footer-bottom"><p>&copy; 2026 ChispaNica. Todos los derechos reservados.</p><p class="local-touch">🇳🇮 Hecho con ❤️ en Nicaragua</p></div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ChispaNica. Todos los derechos reservados.</p>
+      <p class="local-touch" style="border-top:none; margin-top:0.5rem; padding-top:0;">🇳🇮 Hecho con ❤️ en Nicaragua</p>
+    </div>
   </footer>
-<!-- ===== MODAL EDITAR PERFIL ===== -->
-<div id="editProfileModal" class="modal-overlay" style="display:none;">
-  <div class="modal-container modal-edit">
-    <button class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></button>
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-logo"><i class="fas fa-user-edit"></i> <span>Editar perfil</span></div>
-      </div>
 
-      <!-- Foto de perfil -->
-      <div class="profile-pic-edit">
-  <img id="modalProfileImage" src="" alt="Foto de perfil" />
-  <div class="camera-icon" id="uploadPhotoIcon">
-    <i class="fas fa-camera"></i>
-  </div>
-</div>
-<input type="file" id="uploadPhoto" accept="image/*" style="display: none;" />
-
-      <!-- Nombre -->
-      <div class="form-group" style="margin-top:1rem;">
-        <i class="fas fa-user icon-input"></i>
-        <input type="text" id="editNameInput" placeholder=" " />
-        <label for="editNameInput">Nombre completo</label>
-        <span class="focus-border"></span>
-      </div>
-
-      <!-- Botones -->
-      <div style="display:flex; gap:0.8rem; margin-top:1.5rem;">
-        <button class="btn-submit" id="saveProfileBtn" style="flex:1;">
-          <i class="fas fa-save"></i> Guardar cambios
-        </button>
-        <button class="btn-submit" id="cancelEditBtn" style="flex:1; background: #475569;">
-          <i class="fas fa-times"></i> Cancelar
-        </button>
-      </div>
-
-      <div id="editProfileMessage" style="margin-top:1rem; text-align:center; font-size:0.9rem;"></div>
-    </div>
-  </div>
-</div>
+  <!-- ===== SCRIPTS ===== -->
   <script src="script.js"></script>
 </body>
 </html>
