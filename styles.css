@@ -11,6 +11,9 @@ body {
   color: #e2e8f0;
   line-height: 1.6;
   scroll-behavior: smooth;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 a {
@@ -45,6 +48,7 @@ ul {
 .navbar {
   background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   padding: 0.8rem 0;
   position: sticky;
@@ -56,6 +60,7 @@ ul {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .logo {
@@ -71,9 +76,22 @@ ul {
   font-size: 1.8rem;
 }
 
+.nav-menu {
+  flex: 1 1 100%;
+  order: 3;
+  display: none;
+  margin-top: 0.8rem;
+}
+
+.nav-menu.active {
+  display: block;
+}
+
 .nav-menu ul {
   display: flex;
-  gap: 2rem;
+  flex-direction: column;
+  gap: 0.8rem;
+  align-items: center;
 }
 
 .nav-menu a {
@@ -82,6 +100,7 @@ ul {
   color: #94a3b8;
   transition: color var(--transition);
   position: relative;
+  padding: 0.4rem 0;
 }
 
 .nav-menu a:hover,
@@ -92,7 +111,7 @@ ul {
 .nav-menu a.active::after {
   content: '';
   position: absolute;
-  bottom: -4px;
+  bottom: -2px;
   left: 0;
   width: 100%;
   height: 2px;
@@ -104,6 +123,7 @@ ul {
   display: flex;
   align-items: center;
   gap: 1.2rem;
+  margin-left: auto;
 }
 
 .btn-entrar {
@@ -117,6 +137,7 @@ ul {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  white-space: nowrap;
 }
 
 .btn-entrar:hover {
@@ -125,12 +146,13 @@ ul {
 }
 
 .menu-toggle {
-  display: none;
+  display: block;
   background: none;
   border: none;
   color: #fff;
   font-size: 1.6rem;
   cursor: pointer;
+  padding: 0.2rem;
 }
 
 /* ===== HERO ===== */
@@ -141,13 +163,14 @@ ul {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  grid-template-columns: 1fr;
+  gap: 2rem;
   align-items: center;
+  text-align: center;
 }
 
 .hero-content h1 {
-  font-size: 3.2rem;
+  font-size: 2.4rem;
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 1rem;
@@ -161,15 +184,16 @@ ul {
 }
 
 .hero-content p {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #94a3b8;
   max-width: 480px;
-  margin-bottom: 2rem;
+  margin: 0 auto 2rem;
 }
 
 .hero-buttons {
   display: flex;
   gap: 1rem;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
@@ -208,9 +232,11 @@ ul {
 
 .hero-image img {
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  margin: 0 auto;
+  display: block;
 }
 
 /* ===== STATS ===== */
@@ -223,9 +249,13 @@ ul {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 2rem;
   text-align: center;
+}
+
+.stat-item:last-child {
+  grid-column: span 2;
 }
 
 .stat-item i {
@@ -236,7 +266,7 @@ ul {
 
 .stat-number {
   display: block;
-  font-size: 2.8rem;
+  font-size: 2.4rem;
   font-weight: 800;
   color: #fff;
 }
@@ -252,7 +282,7 @@ section {
 }
 
 .section-title {
-  font-size: 2.4rem;
+  font-size: 2rem;
   font-weight: 700;
   text-align: center;
   margin-bottom: 2.5rem;
@@ -271,7 +301,7 @@ section {
 /* ===== JUEGOS ===== */
 .juegos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.8rem;
 }
 
@@ -340,7 +370,7 @@ section {
 
 .proximamente-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 1.5rem;
 }
 
@@ -372,7 +402,7 @@ section {
 /* ===== RECOMPENSAS ===== */
 .recompensas-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 2rem;
   margin-bottom: 2rem;
 }
@@ -412,6 +442,7 @@ section {
   background: var(--bg-card);
   border-radius: var(--radius);
   overflow: hidden;
+  font-size: 0.95rem;
 }
 
 .tabla-premios th,
@@ -446,6 +477,7 @@ section {
   align-items: center;
   padding: 0.6rem 1.2rem;
   border-bottom: 1px solid #2d3a4f;
+  flex-wrap: wrap;
 }
 
 .rank-item:last-child {
@@ -461,11 +493,13 @@ section {
 .rank-name {
   flex: 1;
   font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .rank-score {
   font-weight: 700;
   color: #a5b4fc;
+  font-size: 0.9rem;
 }
 
 /* ===== NOVEDADES ===== */
@@ -504,13 +538,15 @@ section {
   background: #0b1120;
   padding: 3rem 0 1.5rem;
   border-top: 1px solid #1e293b;
+  margin-top: auto;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 2rem;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 .footer-col h4 {
@@ -529,7 +565,9 @@ section {
 .social-links {
   display: flex;
   gap: 0.8rem;
+  justify-content: center;
   margin-top: 0.8rem;
+  flex-wrap: wrap;
 }
 
 .social-links a {
@@ -558,73 +596,89 @@ section {
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 992px) {
+@media (min-width: 768px) {
+  .nav-menu {
+    display: flex !important;
+    flex: 0 1 auto;
+    order: 0;
+    margin-top: 0;
+  }
+  .nav-menu ul {
+    flex-direction: row;
+    gap: 2rem;
+  }
+  .menu-toggle {
+    display: none;
+  }
   .hero-grid {
-    grid-template-columns: 1fr;
-    text-align: center;
+    grid-template-columns: 1fr 1fr;
+    text-align: left;
   }
   .hero-content p {
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 0;
+    margin-right: 0;
   }
   .hero-buttons {
-    justify-content: center;
+    justify-content: flex-start;
   }
-  .hero-image img {
-    max-width: 400px;
+  .hero-content h1 {
+    font-size: 3rem;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .stat-item:last-child {
+    grid-column: span 1;
+  }
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+    text-align: left;
+  }
+  .social-links {
+    justify-content: flex-start;
+  }
+  .stat-number {
+    font-size: 2.8rem;
   }
 }
 
-@media (max-width: 768px) {
-  .nav-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: #0f172a;
-    border-bottom: 1px solid #2d3a4f;
-    padding: 1rem 0;
+@media (min-width: 1024px) {
+  .hero-content h1 {
+    font-size: 3.6rem;
   }
-  .nav-menu.active {
-    display: block;
+  .hero-image img {
+    max-width: 500px;
   }
-  .nav-menu ul {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+  .juegos-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
-  .menu-toggle {
-    display: block;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  .stat-item:last-child {
-    grid-column: span 2;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-  .social-links {
-    justify-content: center;
+  .proximamente-grid {
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 
 @media (max-width: 480px) {
   .hero-content h1 {
-    font-size: 2.2rem;
-  }
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  .stat-item:last-child {
-    grid-column: span 1;
+    font-size: 2rem;
   }
   .section-title {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
+  }
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  .juego-card {
+    padding: 1.2rem 0.8rem;
+  }
+  .rank-item {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  .tabla-premios th,
+  .tabla-premios td {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
   }
 }
