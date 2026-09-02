@@ -24,13 +24,12 @@ const stats = document.querySelectorAll('.stat-number');
 
 const animateCounter = (el) => {
   const target = parseInt(el.getAttribute('data-target'), 10);
-  const duration = 2000; // ms
+  const duration = 2000;
   const startTime = performance.now();
 
   const update = (currentTime) => {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    // función de easing (cubic-bezier)
     const eased = 1 - Math.pow(1 - progress, 3);
     const current = Math.floor(eased * target);
     el.textContent = current.toLocaleString();
@@ -43,39 +42,24 @@ const animateCounter = (el) => {
   requestAnimationFrame(update);
 };
 
-// Usar Intersection Observer para disparar cuando estén visibles
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      const el = entry.target;
-      animateCounter(el);
-      observer.unobserve(el);
+      animateCounter(entry.target);
+      observer.unobserve(entry.target);
     }
   });
 }, { threshold: 0.5 });
 
 stats.forEach(stat => observer.observe(stat));
 
-// ===== TIEMPO RESTANTE (ejemplo dinámico) =====
-// Actualizar cada minuto para simular cuenta regresiva
-const tiempoElements = document.querySelectorAll('.tiempo-restante span');
+// ===== TIEMPO RESTANTE (simulación) =====
+// (En producción se calcularía desde una fecha objetivo)
+setInterval(() => {
+  // Solo para demostración, no se modifica realmente
+}, 30000);
 
-const updateTimes = () => {
-  tiempoElements.forEach((span, index) => {
-    // Valores de ejemplo: decrementar aleatoriamente (solo demo)
-    // En una app real, se calcularía desde una fecha objetivo
-    let text = span.textContent;
-    if (text.includes('h') || text.includes('d')) {
-      // Solo para demostración, no hacemos decremento real
-      // Podríamos simular pequeños cambios
-    }
-  });
-};
-
-// Actualizar cada 30 segundos para demostración
-setInterval(updateTimes, 30000);
-
-// ===== RESALTAR ENLACE ACTIVO AL HACER SCROLL =====
+// ===== RESALTAR ENLACE ACTIVO =====
 const sections = document.querySelectorAll('section[id]');
 const navLinks = document.querySelectorAll('.nav-menu a');
 
@@ -95,5 +79,18 @@ window.addEventListener('scroll', () => {
   });
 });
 
+// ===== REGISTRO DEL SERVICE WORKER (PWA) =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => {
+        console.log('Service Worker registrado correctamente:', reg);
+      })
+      .catch(err => {
+        console.warn('Error al registrar Service Worker:', err);
+      });
+  });
+}
+
 console.log('🚀 ChispaNica cargado correctamente.');
-console.log('🔗 Preparado para integración con Supabase (clave pública almacenada).');
+console.log('🔗 Preparado para integración con Supabase (clave pública: sb_publishable_qomvhRRFkvrepVZkJgAJaw_JMLuWh_t)');
