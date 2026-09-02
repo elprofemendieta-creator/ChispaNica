@@ -481,12 +481,15 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Perfil (placeholder)
-  if (elements.btnProfile) {
-    elements.btnProfile.addEventListener('click', function() {
-      alert('🔧 Próximamente podrás editar tu perfil.');
-      if (elements.userDropdown) elements.userDropdown.classList.remove('active');
-    });
+  document.getElementById('btnProfile').addEventListener('click', function() {
+  if (currentUser) {
+    navigateTo('page-perfil');
+    loadProfileData();
+    document.getElementById('userDropdown').classList.remove('active');
+  } else {
+    alert('Inicia sesión para ver tu perfil.');
   }
+});
 
   // ============================================================
   // 11. EVENTOS DE AUTENTICACIÓN (Supabase)
