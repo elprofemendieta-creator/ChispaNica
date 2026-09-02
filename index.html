@@ -262,7 +262,46 @@
     </div>
     <div class="footer-bottom"><p>&copy; 2026 ChispaNica. Todos los derechos reservados.</p><p class="local-touch">🇳🇮 Hecho con ❤️ en Nicaragua</p></div>
   </footer>
+<!-- ===== MODAL EDITAR PERFIL ===== -->
+<div id="editProfileModal" class="modal-overlay" style="display:none;">
+  <div class="modal-container modal-edit">
+    <button class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></button>
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-logo"><i class="fas fa-user-edit"></i> <span>Editar perfil</span></div>
+      </div>
 
+      <!-- Foto de perfil -->
+      <div class="profile-pic-edit">
+        <img id="modalProfileImage" src="" alt="Foto de perfil" />
+        <div class="camera-icon" id="uploadPhotoIcon">
+          <i class="fas fa-camera"></i>
+        </div>
+      </div>
+      <input type="file" id="uploadPhoto" accept="image/*" style="display: none;" />
+
+      <!-- Nombre -->
+      <div class="form-group" style="margin-top:1rem;">
+        <i class="fas fa-user icon-input"></i>
+        <input type="text" id="editNameInput" placeholder=" " />
+        <label for="editNameInput">Nombre completo</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <!-- Botones -->
+      <div style="display:flex; gap:0.8rem; margin-top:1.5rem;">
+        <button class="btn-submit" id="saveProfileBtn" style="flex:1;">
+          <i class="fas fa-save"></i> Guardar cambios
+        </button>
+        <button class="btn-submit" id="cancelEditBtn" style="flex:1; background: #475569;">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+      </div>
+
+      <div id="editProfileMessage" style="margin-top:1rem; text-align:center; font-size:0.9rem;"></div>
+    </div>
+  </div>
+</div>
   <script src="script.js"></script>
 </body>
 </html>
