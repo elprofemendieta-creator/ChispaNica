@@ -703,7 +703,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // ============================================================
   async function uploadToImgbb(file) {
     const formData = new FormData();
-    formData.append('key', d67ad1a46c99f2914bcaa2df0b229214);
+    formData.append('key', IMGBB_API_KEY);
     formData.append('image', file);
 
     try {
