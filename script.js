@@ -1,5 +1,5 @@
 // ============================================================
-// 1. CONFIGURACIÓN DE SUPABASE
+// 1. CONFIGURACIÓN SUPABASE
 // ============================================================
 const SUPABASE_URL = 'https://vrfdvythxysbhugrermx.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_qomvhRRFkvrepVZkJgAJaw_JMLuWh_t';
@@ -9,17 +9,15 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // ============================================================
 // 2. ELEMENTOS DOM
 // ============================================================
-// Navbar
+// Header
 const btnEntrar = document.getElementById('btnEntrar');
 const userProfile = document.getElementById('userProfile');
 const userAvatar = document.getElementById('userAvatar');
-const userName = document.getElementById('userName');
+const userDropdown = document.getElementById('userDropdown');
+const btnLogout = document.getElementById('btnLogout');
+const btnProfile = document.getElementById('btnProfile');
 const userCoins = document.getElementById('userCoins');
 const userDiamonds = document.getElementById('userDiamonds');
-const userDropdown = document.getElementById('userDropdown');
-const userInfo = document.getElementById('userInfo');
-const btnLogout = document.getElementById('btnLogout');
-const btnEditProfile = document.getElementById('btnEditProfile');
 
 // Modal
 const modalOverlay = document.getElementById('modalOverlay');
@@ -37,99 +35,43 @@ const btnIcon = document.getElementById('btnIcon');
 const toggleLink = document.getElementById('toggleLink');
 const authError = document.getElementById('authError');
 
-// Menú móvil
-const menuToggle = document.getElementById('menuToggle');
-const navMenu = document.getElementById('navMenu');
+// Bottom Nav
+const navItems = document.querySelectorAll('.nav-item');
+const pages = document.querySelectorAll('.page-section');
 
-let isLogin = true; // true = login, false = registro
+let isLogin = true;
+let currentUser = null;
+let walletData = null;
 
 // ============================================================
-// 3. MENÚ MÓVIL
+// 3. NAVEGACIÓN POR TABS
 // ============================================================
-menuToggle.addEventListener('click', () => {
-  navMenu.classList.toggle('active');
-  const icon = menuToggle.querySelector('i');
-  icon.classList.toggle('fa-bars');
-  icon.classList.toggle('fa-times');
-});
-
-document.querySelectorAll('.nav-menu a').forEach(link => {
-  link.addEventListener('click', () => {
-    navMenu.classList.remove('active');
-    const icon = menuToggle.querySelector('i');
-    icon.classList.add('fa-bars');
-    icon.classList.remove('fa-times');
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const pageId = item.dataset.page;
+    // Actualizar active en nav
+    navItems.forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+    // Mostrar página correspondiente
+    pages.forEach(page => {
+      page.classList.remove('active');
+      if (page.id === pageId) {
+        page.classList.add('active');
+      }
+    });
+    // Scroll al inicio
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 });
 
 // ============================================================
-// 4. CONTADORES ANIMADOS
+// 4. MODAL LOGIN / REGISTRO
 // ============================================================
-const stats = document.querySelectorAll('.stat-number');
-
-const animateCounter = (el) => {
-  const target = parseInt(el.getAttribute('data-target'), 10);
-  const duration = 2000;
-  const startTime = performance.now();
-
-  const update = (currentTime) => {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    const current = Math.floor(eased * target);
-    el.textContent = current.toLocaleString();
-    if (progress < 1) {
-      requestAnimationFrame(update);
-    } else {
-      el.textContent = target.toLocaleString();
-    }
-  };
-  requestAnimationFrame(update);
-};
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      animateCounter(entry.target);
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.5 });
-
-stats.forEach(stat => observer.observe(stat));
-
-// ============================================================
-// 5. RESALTAR ENLACE ACTIVO
-// ============================================================
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-menu a');
-
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(section => {
-    const sectionTop = section.offsetTop - 100;
-    if (window.scrollY >= sectionTop) {
-      current = section.getAttribute('id');
-    }
-  });
-  navLinks.forEach(link => {
-    link.classList.remove('active');
-    if (link.getAttribute('href') === `#${current}`) {
-      link.classList.add('active');
-    }
-  });
-});
-
-// ============================================================
-// 6. MODAL LOGIN / REGISTRO
-// ============================================================
-// Abrir modal
 btnEntrar.addEventListener('click', (e) => {
   e.preventDefault();
   openModal();
 });
 
-// Cerrar modal
 modalClose.addEventListener('click', closeModal);
 modalOverlay.addEventListener('click', (e) => {
   if (e.target === modalOverlay) closeModal();
@@ -142,7 +84,6 @@ function openModal() {
   modalOverlay.classList.add('active');
   document.body.style.overflow = 'hidden';
   authError.style.display = 'none';
-  // Si no hay sesión, aseguramos modo login
   if (!isLogin) {
     isLogin = true;
     updateModalMode();
@@ -157,7 +98,7 @@ function closeModal() {
   authError.style.display = 'none';
 }
 
-// Alternancia Login / Registro
+// Alternancia Login/Registro
 toggleLink.addEventListener('click', (e) => {
   e.preventDefault();
   isLogin = !isLogin;
@@ -167,12 +108,11 @@ toggleLink.addEventListener('click', (e) => {
 function updateModalMode() {
   if (isLogin) {
     modalTitle.textContent = 'Iniciar sesión';
-    modalSubtext.textContent = 'Accede a tu cuenta y empieza a ganar';
+    modalSubtext.textContent = 'Accede a tu cuenta';
     nameGroup.style.display = 'none';
     nameInput.removeAttribute('required');
     btnText.textContent = 'Entrar';
     btnIcon.className = 'fas fa-arrow-right';
-    toggleLink.textContent = 'Regístrate';
     toggleLink.parentElement.innerHTML = `¿No tienes cuenta? <a href="#" id="toggleLink">Regístrate</a>`;
     document.getElementById('toggleLink').addEventListener('click', (e) => {
       e.preventDefault();
@@ -181,12 +121,11 @@ function updateModalMode() {
     });
   } else {
     modalTitle.textContent = 'Crear cuenta';
-    modalSubtext.textContent = 'Regístrate y comienza a ganar recompensas';
+    modalSubtext.textContent = 'Regístrate y comienza a ganar';
     nameGroup.style.display = 'flex';
     nameInput.setAttribute('required', 'required');
     btnText.textContent = 'Registrarse';
     btnIcon.className = 'fas fa-user-plus';
-    toggleLink.textContent = 'Iniciar sesión';
     toggleLink.parentElement.innerHTML = `¿Ya tienes cuenta? <a href="#" id="toggleLink">Iniciar sesión</a>`;
     document.getElementById('toggleLink').addEventListener('click', (e) => {
       e.preventDefault();
@@ -198,7 +137,7 @@ function updateModalMode() {
 }
 
 // ============================================================
-// 7. ENVÍO DEL FORMULARIO (Autenticación con Supabase)
+// 5. AUTENTICACIÓN CON SUPABASE
 // ============================================================
 authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -209,89 +148,59 @@ authForm.addEventListener('submit', async (e) => {
   const fullName = nameInput.value.trim();
 
   if (!email || !password) {
-    showError('Por favor, completa todos los campos.');
+    showError('Completa todos los campos.');
     return;
   }
-
   if (!isLogin && !fullName) {
-    showError('Por favor, ingresa tu nombre completo.');
+    showError('Ingresa tu nombre completo.');
     return;
   }
 
-  // Deshabilitar botón durante la operación
   btnSubmit.disabled = true;
   btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
 
   try {
     if (isLogin) {
-      // INICIO DE SESIÓN
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      // Éxito: el evento onAuthStateChange actualizará la UI
       closeModal();
     } else {
-      // REGISTRO
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: { full_name: fullName }
-        }
+        options: { data: { full_name: fullName } }
       });
-
       if (error) throw error;
 
-      // Si el registro es exitoso, creamos el perfil, wallet y streak
       if (data.user) {
         const userId = data.user.id;
-
-        // 1. Crear perfil
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: userId,
-            full_name: fullName,
-            username: fullName.toLowerCase().replace(/\s/g, '_') + '_' + userId.slice(0, 6),
-            avatar_url: null,
-            level: 1
-          });
-
-        if (profileError) throw profileError;
-
-        // 2. Crear wallet
-        const { error: walletError } = await supabase
-          .from('wallets')
-          .insert({
-            user_id: userId,
-            coins: 0,
-            diamonds: 0
-          });
-
-        if (walletError) throw walletError;
-
-        // 3. Crear streak
-        const { error: streakError } = await supabase
-          .from('streaks')
-          .insert({
-            user_id: userId,
-            current_streak: 0,
-            longest_streak: 0,
-            last_claim_date: null
-          });
-
-        if (streakError) throw streakError;
-
-        // Mostrar mensaje de éxito y cerrar modal
-        alert('✅ Cuenta creada exitosamente. ¡Bienvenido a ChispaNica!');
+        // Crear perfil
+        await supabase.from('profiles').insert({
+          id: userId,
+          full_name: fullName,
+          username: fullName.toLowerCase().replace(/\s/g, '_') + '_' + userId.slice(0, 6),
+          avatar_url: null,
+          level: 1
+        });
+        // Crear wallet
+        await supabase.from('wallets').insert({
+          user_id: userId,
+          coins: 0,
+          diamonds: 0
+        });
+        // Crear streak
+        await supabase.from('streaks').insert({
+          user_id: userId,
+          current_streak: 0,
+          longest_streak: 0,
+          last_claim_date: null
+        });
+        alert('✅ ¡Cuenta creada exitosamente!');
         closeModal();
       }
     }
   } catch (error) {
-    console.error('Error de autenticación:', error);
+    console.error('Error:', error);
     showError(error.message || 'Ocurrió un error. Inténtalo de nuevo.');
   } finally {
     btnSubmit.disabled = false;
@@ -308,77 +217,63 @@ function showError(message) {
 }
 
 // ============================================================
-// 8. GESTIÓN DE SESIÓN Y UI CON SALDOS
+// 6. GESTIÓN DE SESIÓN Y WALLET
 // ============================================================
-async function loadUserProfile() {
+async function loadUserData() {
   const { data: { session } } = await supabase.auth.getSession();
+  
   if (session) {
     const user = session.user;
-    try {
-      // Obtener perfil y wallet en paralelo
-      const [profileResult, walletResult] = await Promise.all([
-        supabase.from('profiles').select('full_name, avatar_url').eq('id', user.id).single(),
-        supabase.from('wallets').select('coins, diamonds').eq('user_id', user.id).single()
-      ]);
+    currentUser = user;
+    
+    // Obtener perfil
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name, avatar_url')
+      .eq('id', user.id)
+      .single();
 
-      const profile = profileResult.data;
-      const wallet = walletResult.data;
+    // Obtener wallet
+    const { data: wallet } = await supabase
+      .from('wallets')
+      .select('coins, diamonds')
+      .eq('user_id', user.id)
+      .single();
 
-      if (profileResult.error) throw profileResult.error;
-      if (walletResult.error) throw walletResult.error;
-
-      const displayName = profile?.full_name || user.email || 'Usuario';
-      const avatarUrl = profile?.avatar_url || null;
-      const coins = wallet?.coins || 0;
-      const diamonds = wallet?.diamonds || 0;
-
-      updateUIForUser(displayName, avatarUrl, coins, diamonds);
-    } catch (error) {
-      console.error('Error al cargar datos del usuario:', error);
-      // Si hay error, mostrar solo el nombre
-      updateUIForUser(user.email || 'Usuario', null, 0, 0);
-    }
+    walletData = wallet;
+    
+    const displayName = profile?.full_name || user.email || 'Usuario';
+    updateUIForUser(displayName, profile?.avatar_url);
+    updateWalletUI(wallet);
   } else {
     updateUIForGuest();
+    updateWalletUI(null);
   }
 }
 
-function updateUIForUser(displayName, avatarUrl, coins, diamonds) {
-  // Ocultar botón Entrar, mostrar perfil
+function updateUIForUser(displayName, avatarUrl) {
   btnEntrar.style.display = 'none';
   userProfile.style.display = 'flex';
-
-  // Actualizar saldos
-  userCoins.textContent = coins.toLocaleString();
-  userDiamonds.textContent = diamonds.toLocaleString();
-
-  // Iniciales del nombre
+  
   const initials = displayName
     .split(' ')
     .map(word => word[0]?.toUpperCase() || '')
     .slice(0, 2)
     .join('');
-
+  
   userAvatar.textContent = initials;
-  userName.textContent = displayName;
-
-  // Si hay avatar_url, usarlo (pendiente de implementar)
+  
   if (avatarUrl) {
     userAvatar.style.backgroundImage = `url(${avatarUrl})`;
     userAvatar.style.backgroundSize = 'cover';
     userAvatar.textContent = '';
-  } else {
-    userAvatar.style.backgroundImage = '';
-    userAvatar.textContent = initials;
   }
-
-  // Abrir/cerrar dropdown al hacer clic en el perfil
-  userInfo.onclick = (e) => {
+  
+  userProfile.onclick = (e) => {
     e.stopPropagation();
     userDropdown.classList.toggle('active');
   };
-
-  // Cerrar dropdown al hacer clic fuera
+  
   document.addEventListener('click', () => {
     userDropdown.classList.remove('active');
   });
@@ -387,52 +282,92 @@ function updateUIForUser(displayName, avatarUrl, coins, diamonds) {
 function updateUIForGuest() {
   btnEntrar.style.display = 'flex';
   userProfile.style.display = 'none';
+  userDropdown.classList.remove('active');
+}
+
+function updateWalletUI(wallet) {
+  if (wallet) {
+    userCoins.textContent = wallet.coins || 0;
+    userDiamonds.textContent = wallet.diamonds || 0;
+  } else {
+    userCoins.textContent = '0';
+    userDiamonds.textContent = '0';
+  }
 }
 
 // Cerrar sesión
 btnLogout.addEventListener('click', async () => {
   const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.error('Error al cerrar sesión:', error);
-  } else {
+  if (!error) {
     updateUIForGuest();
+    updateWalletUI(null);
     userDropdown.classList.remove('active');
+    // Ir a inicio
+    document.querySelector('[data-page="page-inicio"]').click();
   }
 });
 
-// Editar perfil (por ahora solo alerta)
-btnEditProfile.addEventListener('click', () => {
-  alert('Funcionalidad de edición de perfil próximamente.');
-  userDropdown.classList.remove('active');
-});
-
 // ============================================================
-// 9. ESCUCHAR CAMBIOS EN LA AUTENTICACIÓN
+// 7. EVENTOS DE AUTENTICACIÓN
 // ============================================================
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-    if (session) loadUserProfile();
+    if (session) loadUserData();
   } else if (event === 'SIGNED_OUT') {
     updateUIForGuest();
+    updateWalletUI(null);
   }
 });
 
 // ============================================================
-// 10. INICIALIZAR UI AL CARGAR LA PÁGINA
+// 8. CONTADORES ANIMADOS
+// ============================================================
+const stats = document.querySelectorAll('.stat-number');
+
+const animateCounter = (el) => {
+  const target = parseInt(el.getAttribute('data-target'), 10);
+  const duration = 2000;
+  const startTime = performance.now();
+  
+  const update = (currentTime) => {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(eased * target);
+    el.textContent = current.toLocaleString();
+    if (progress < 1) requestAnimationFrame(update);
+    else el.textContent = target.toLocaleString();
+  };
+  requestAnimationFrame(update);
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateCounter(entry.target);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+stats.forEach(stat => observer.observe(stat));
+
+// ============================================================
+// 9. INICIALIZAR
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-  loadUserProfile();
+  loadUserData();
 });
 
 // ============================================================
-// 11. REGISTRO DEL SERVICE WORKER (PWA)
+// 10. SERVICE WORKER (PWA)
 // ============================================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('Service Worker registrado:', reg))
+      .then(reg => console.log('SW registrado:', reg))
       .catch(err => console.warn('Error SW:', err));
   });
 }
 
-console.log('🚀 ChispaNica cargado con Supabase.');
+console.log('🚀 ChispaNica cargado con Supabase y Bottom Nav');
