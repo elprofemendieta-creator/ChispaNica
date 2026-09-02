@@ -1,0 +1,50 @@
+<!-- ===== MODAL LOGIN / REGISTRO ===== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-container">
+    <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-logo">
+          <i class="fas fa-bolt" style="color: #fbbf24;"></i>
+          <span>ChispaNica</span>
+        </div>
+        <h2 id="modalTitle">Iniciar sesión</h2>
+        <p id="modalSubtext">Accede a tu cuenta y empieza a ganar</p>
+      </div>
+
+      <!-- Formulario -->
+      <form id="authForm" autocomplete="off">
+        <!-- Campo nombre (solo registro) -->
+        <div class="form-group" id="nameGroup" style="display: none;">
+          <i class="fas fa-user icon-input"></i>
+          <input type="text" id="nameInput" required />
+          <label for="nameInput">Nombre completo</label>
+          <span class="focus-border"></span>
+        </div>
+
+        <div class="form-group">
+          <i class="fas fa-envelope icon-input"></i>
+          <input type="email" id="emailInput" required />
+          <label for="emailInput">Correo electrónico</label>
+          <span class="focus-border"></span>
+        </div>
+
+        <div class="form-group">
+          <i class="fas fa-lock icon-input"></i>
+          <input type="password" id="passwordInput" required />
+          <label for="passwordInput">Contraseña</label>
+          <span class="focus-border"></span>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSubmit">
+          <span id="btnText">Entrar</span>
+          <i class="fas fa-arrow-right" id="btnIcon"></i>
+        </button>
+      </form>
+
+      <div class="modal-footer">
+        <p id="toggleText">¿No tienes cuenta? <a href="#" id="toggleLink">Regístrate</a></p>
+      </div>
+    </div>
+  </div>
+</div>
