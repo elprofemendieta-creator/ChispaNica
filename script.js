@@ -1000,7 +1000,7 @@ saveProfileBtn.addEventListener('click', async () => {
 // ===== SUBIR A IMGBB =====
 async function uploadToImgbb(file) {
   const formData = new FormData();
-  formData.append('key', 'TU_API_KEY'); // <-- Reemplaza con tu API Key
+  formData.append('key', 'd67ad1a46c99f2914bcaa2df0b229214'); // <-tu API Key
   formData.append('image', file);
   
   try {
@@ -1016,5 +1016,72 @@ async function uploadToImgbb(file) {
     }
   } catch (error) {
     throw new Error('Error de conexión con imgbb: ' + error.message);
+  }
+}
+//-- bton
+saveProfileBtn.addEventListener('click', async () => {
+  const nuevoNombre = editNameInput.value.trim();
+  if (!nuevoNombre) {
+    editProfileMessage.textContent = '❌ El nombre no puede estar vacío.';
+    editProfileMessage.style.color = '#fca5a5';
+    return;
+  }
+
+  let avatarUrl = null;
+  if (tempFile) {
+    try {
+      // Subir a imgbb
+      avatarUrl = await uploadToImgbb(tempFile);
+      editProfileMessage.textContent = '📤 Imagen subida a imgbb...';
+      editProfileMessage.style.color = '#34d399';
+    } catch (error) {
+      editProfileMessage.textContent = '❌ ' + error.message;
+      editProfileMessage.style.color = '#fca5a5';
+      return;
+    }
+  } else {
+    // Mantener avatar actual si no hay cambio
+    const currentImg = document.getElementById('profileAvatarImg').src;
+    if (currentImg && currentImg !== window.location.href) {
+      avatarUrl = currentImg;
+    }
+  }
+
+  // Guardar en Supabase
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        full_name: nuevoNombre,
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', currentUser.id);
+
+    if (error) throw error;
+
+    editProfileMessage.textContent = '✅ Perfil actualizado correctamente.';
+    editProfileMessage.style.color = '#34d399';
+    await loadProfileData(); // recargar datos
+    // Actualizar header
+    updateHeaderAvatar(nuevoNombre, avatarUrl);
+    setTimeout(closeEditModal, 1500);
+  } catch (error) {
+    editProfileMessage.textContent = '❌ ' + error.message;
+    editProfileMessage.style.color = '#fca5a5';
+  }
+});
+
+// Función auxiliar para actualizar header
+function updateHeaderAvatar(name, avatarUrl) {
+  const avatarEl = document.getElementById('userAvatar');
+  if (avatarUrl) {
+    avatarEl.style.backgroundImage = `url(${avatarUrl})`;
+    avatarEl.style.backgroundSize = 'cover';
+    avatarEl.textContent = '';
+  } else {
+    avatarEl.style.backgroundImage = '';
+    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+    avatarEl.textContent = initials;
   }
 }
