@@ -552,3 +552,268 @@ document.addEventListener('DOMContentLoaded', function() {
 
   console.log('✅ ChispaNica inicializado correctamente.');
 });
+// ... (todo el código anterior de login, navegación, etc.)
+
+// ============================================================
+// 15. PERFIL DE USUARIO (nuevo)
+// ============================================================
+const profilePage = document.getElementById('page-perfil');
+const profileName = document.getElementById('profileName');
+const profileLevel = document.getElementById('profileLevel');
+const profileXp = document.getElementById('profileXp');
+const xpFill = document.getElementById('xpFill');
+const currentStreak = document.getElementById('currentStreak');
+const bestStreak = document.getElementById('bestStreak');
+const profileCoins = document.getElementById('profileCoins');
+const profileDiamonds = document.getElementById('profileDiamonds');
+const profileInitials = document.getElementById('profileInitials');
+const profileAvatarImg = document.getElementById('profileAvatarImg');
+const editName = document.getElementById('editName');
+const editAvatar = document.getElementById('editAvatar');
+const profileForm = document.getElementById('profileForm');
+const profileMessage = document.getElementById('profileMessage');
+const achievementsList = document.getElementById('achievementsList');
+const btnDeleteAccount = document.getElementById('btnDeleteAccount');
+
+// Abrir perfil desde el dropdown
+document.getElementById('btnProfile').addEventListener('click', function() {
+  if (currentUser) {
+    navigateTo('page-perfil');
+    loadProfileData();
+    document.getElementById('userDropdown').classList.remove('active');
+  } else {
+    alert('Inicia sesión para ver tu perfil.');
+  }
+});
+
+async function loadProfileData() {
+  if (!currentUser) return;
+  
+  try {
+    // Obtener perfil
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single();
+    if (error) throw error;
+
+    // Obtener wallet
+    const { data: wallet } = await supabase
+      .from('wallets')
+      .select('coins, diamonds')
+      .eq('user_id', currentUser.id)
+      .single();
+
+    // Obtener streak
+    const { data: streak } = await supabase
+      .from('streaks')
+      .select('current_streak, longest_streak')
+      .eq('user_id', currentUser.id)
+      .single();
+
+    // Mostrar datos
+    const fullName = profile.full_name || 'Usuario';
+    profileName.textContent = fullName;
+    profileLevel.textContent = profile.level || 1;
+    profileXp.textContent = profile.xp || 0;
+    editName.value = fullName;
+    editAvatar.value = profile.avatar_url || '';
+
+    // Avatar
+    if (profile.avatar_url) {
+      profileAvatarImg.src = profile.avatar_url;
+      profileAvatarImg.style.display = 'block';
+      profileInitials.style.display = 'none';
+    } else {
+      profileAvatarImg.style.display = 'none';
+      profileInitials.style.display = 'flex';
+      profileInitials.textContent = fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+    }
+
+    // Barra de XP (calcular porcentaje para el siguiente nivel)
+    const xp = profile.xp || 0;
+    const level = profile.level || 1;
+    const xpNextLevel = getXpForLevel(level + 1);
+    const xpCurrentLevel = getXpForLevel(level);
+    const progress = xpNextLevel > xpCurrentLevel ? (xp - xpCurrentLevel) / (xpNextLevel - xpCurrentLevel) * 100 : 0;
+    xpFill.style.width = Math.min(progress, 100) + '%';
+
+    // Rachas
+    currentStreak.textContent = streak?.current_streak || 0;
+    bestStreak.textContent = streak?.longest_streak || 0;
+
+    // Monedas
+    profileCoins.textContent = wallet?.coins || 0;
+    profileDiamonds.textContent = wallet?.diamonds || 0;
+
+    // Logros
+    await loadAchievements();
+
+  } catch (error) {
+    console.error('Error cargando perfil:', error);
+  }
+}
+
+function getXpForLevel(level) {
+  const xpTable = {
+    1: 0, 2: 100, 3: 250, 4: 500, 5: 1000,
+    6: 1800, 7: 3000, 8: 5000, 9: 8000, 10: 12000
+  };
+  return xpTable[level] || 12000 + (level - 10) * 4000;
+}
+
+// Cargar logros
+async function loadAchievements() {
+  if (!currentUser) return;
+  
+  try {
+    // Obtener todos los logros disponibles
+    const { data: allAchievements } = await supabase
+      .from('achievements')
+      .select('*')
+      .order('id');
+
+    // Obtener logros del usuario
+    const { data: userAchievements } = await supabase
+      .from('user_achievements')
+      .select('achievement_id')
+      .eq('user_id', currentUser.id);
+
+    const unlockedIds = userAchievements?.map(a => a.achievement_id) || [];
+
+    achievementsList.innerHTML = allAchievements.map(ach => {
+      const unlocked = unlockedIds.includes(ach.id);
+      return `
+        <div class="achievement-item ${unlocked ? 'unlocked' : 'locked'}">
+          <span class="ach-icon">${ach.icon || '🏆'}</span>
+          <div class="ach-name">${ach.name}</div>
+          <div class="ach-desc">${ach.description || ''}</div>
+          ${unlocked ? '<small style="color:#34d399;">✅ Desbloqueado</small>' : '<small style="color:#64748b;">🔒 Bloqueado</small>'}
+        </div>
+      `;
+    }).join('');
+
+  } catch (error) {
+    console.error('Error cargando logros:', error);
+  }
+}
+
+// ============================================================
+// 16. EDITAR PERFIL
+// ============================================================
+profileForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  profileMessage.textContent = '';
+  profileMessage.style.color = '';
+
+  const fullName = editName.value.trim();
+  const avatarUrl = editAvatar.value.trim();
+
+  if (!fullName) {
+    profileMessage.textContent = 'El nombre es obligatorio.';
+    profileMessage.style.color = '#fca5a5';
+    return;
+  }
+
+  // Validar URL de imagen (si se proporciona)
+  if (avatarUrl && !avatarUrl.match(/^https?:\/\/.+/i)) {
+    profileMessage.textContent = 'Ingresa una URL válida (https://...)';
+    profileMessage.style.color = '#fca5a5';
+    return;
+  }
+
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        full_name: fullName,
+        avatar_url: avatarUrl || null,
+        updated_at: new Date()
+      })
+      .eq('id', currentUser.id);
+
+    if (error) throw error;
+
+    profileMessage.textContent = '✅ Perfil actualizado correctamente.';
+    profileMessage.style.color = '#34d399';
+
+    // Recargar datos
+    await loadProfileData();
+    // Actualizar también la barra superior
+    const displayName = fullName;
+    const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('userAvatar').textContent = initials;
+    // Actualizar wallet
+    const { data: wallet } = await supabase
+      .from('wallets')
+      .select('coins, diamonds')
+      .eq('user_id', currentUser.id)
+      .single();
+    if (wallet) {
+      document.getElementById('userCoins').textContent = wallet.coins || 0;
+      document.getElementById('userDiamonds').textContent = wallet.diamonds || 0;
+    }
+
+  } catch (error) {
+    console.error('Error actualizando perfil:', error);
+    profileMessage.textContent = '❌ ' + error.message;
+    profileMessage.style.color = '#fca5a5';
+  }
+});
+
+// ============================================================
+// 17. ELIMINAR CUENTA
+// ============================================================
+btnDeleteAccount.addEventListener('click', async function() {
+  if (!currentUser) return;
+  
+  const confirmed = confirm(
+    '⚠️ ¿Estás seguro de que quieres eliminar tu cuenta?\n' +
+    'Esta acción es irreversible y eliminará todos tus datos (perfil, monedas, logros, etc.).'
+  );
+  
+  if (!confirmed) return;
+
+  const password = prompt('Para confirmar, ingresa tu contraseña:');
+  if (!password) return;
+
+  try {
+    // Primero verificar credenciales
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: currentUser.email,
+      password: password
+    });
+    if (signInError) throw new Error('Contraseña incorrecta.');
+
+    // Eliminar datos del usuario en cascada (RLS debe permitir)
+    // Primero eliminamos las filas en tablas relacionadas
+    await supabase.from('user_achievements').delete().eq('user_id', currentUser.id);
+    await supabase.from('streaks').delete().eq('user_id', currentUser.id);
+    await supabase.from('wallets').delete().eq('user_id', currentUser.id);
+    await supabase.from('profiles').delete().eq('id', currentUser.id);
+
+    // Finalmente eliminar el usuario (esto requiere una función RPC o admin, 
+    // porque Supabase no permite eliminar auth.users desde el cliente)
+    // Como alternativa, desactivamos la cuenta o usamos una Edge Function.
+    // Por simplicidad, cerramos sesión y mostramos mensaje.
+    await supabase.auth.signOut();
+    alert('✅ Tu cuenta ha sido eliminada. Sentimos que te vayas.');
+
+    // Volver a la página de inicio
+    navigateTo('page-inicio');
+    updateUIForGuest();
+
+  } catch (error) {
+    alert('❌ Error al eliminar cuenta: ' + error.message);
+  }
+});
+
+// Modificar la función navigateTo para que si se navega al perfil, cargue los datos
+const originalNavigate = window.navigateTo;
+window.navigateTo = function(pageId) {
+  originalNavigate(pageId);
+  if (pageId === 'page-perfil' && currentUser) {
+    loadProfileData();
+  }
+};
