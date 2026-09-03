@@ -1,138 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chispa Nica – Trivia</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    /* (mismo estilo, añadimos monedas y mensaje de error) */
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
     body {
       background: linear-gradient(145deg, #0a2f6c 0%, #1a4a8a 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px;
     }
     .container {
       background: rgba(255,255,255,0.95);
-      max-width: 700px;
-      width: 100%;
-      border-radius: 40px;
-      padding: 30px 25px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      max-width:700px; width:100%; border-radius:40px; padding:30px 25px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.5);
     }
-    h1 {
-      color: #0a2f6c;
-      font-size: 2.2rem;
-      margin-bottom: 5px;
-      text-align: center;
+    h1 { color:#0a2f6c; font-size:2.2rem; text-align:center; }
+    h1 span { color:#f1c40f; }
+    .sub { text-align:center; color:#1a4a8a; font-weight:600; margin-bottom:5px; font-size:1.1rem; }
+    .monedas {
+      background:#0a2f6c; color:#fff; padding:6px 20px; border-radius:40px;
+      display:inline-block; font-weight:700; margin:10px auto; text-align:center;
     }
-    h1 span { color: #f1c40f; }
-    .sub {
-      text-align: center;
-      color: #1a4a8a;
-      font-weight: 600;
-      margin-bottom: 25px;
-      font-size: 1.1rem;
-    }
-    #pregunta {
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: #0a2f6c;
-      margin-bottom: 20px;
-      min-height: 4rem;
-    }
-    .opciones {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 25px;
-    }
+    #pregunta { font-size:1.4rem; font-weight:600; color:#0a2f6c; margin:20px 0; min-height:4rem; }
+    .opciones { display:flex; flex-direction:column; gap:12px; margin-bottom:25px; }
     .opcion {
-      background: #eef4ff;
-      border: 2px solid #c0cee0;
-      border-radius: 60px;
-      padding: 14px 20px;
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: #0a2f6c;
-      cursor: pointer;
-      transition: all 0.15s;
-      text-align: left;
+      background:#eef4ff; border:2px solid #c0cee0; border-radius:60px; padding:14px 20px;
+      font-size:1.1rem; font-weight:500; color:#0a2f6c; cursor:pointer; transition:all 0.15s;
+      text-align:left;
     }
-    .opcion:hover:not(.deshabilitado) {
-      background: #dce5f0;
-      border-color: #1a4a8a;
-      transform: scale(1.02);
-    }
-    .opcion.seleccionada {
-      background: #f1c40f;
-      border-color: #b38f0c;
-      color: #0a2f6c;
-      font-weight: 700;
-    }
-    .opcion.correcta {
-      background: #2ecc71;
-      border-color: #27ae60;
-      color: #fff;
-    }
-    .opcion.incorrecta {
-      background: #e74c3c;
-      border-color: #c0392b;
-      color: #fff;
-    }
-    .opcion.deshabilitado {
-      cursor: default;
-      opacity: 0.7;
-    }
-    #info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-      color: #0a2f6c;
-      margin: 15px 0 10px;
-    }
-    #puntaje { font-size: 1.2rem; }
+    .opcion:hover:not(.deshabilitado) { background:#dce5f0; border-color:#1a4a8a; transform:scale(1.02); }
+    .opcion.seleccionada { background:#f1c40f; border-color:#b38f0c; color:#0a2f6c; font-weight:700; }
+    .opcion.correcta { background:#2ecc71; border-color:#27ae60; color:#fff; }
+    .opcion.incorrecta { background:#e74c3c; border-color:#c0392b; color:#fff; }
+    .opcion.deshabilitado { cursor:default; opacity:0.7; }
+    #info { display:flex; justify-content:space-between; align-items:center; font-weight:600; color:#0a2f6c; margin:15px 0 10px; }
     #siguiente {
-      background: #0a2f6c;
-      border: none;
-      color: #fff;
-      padding: 12px 35px;
-      border-radius: 60px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s;
-      display: inline-block;
+      background:#0a2f6c; border:none; color:#fff; padding:12px 35px; border-radius:60px;
+      font-size:1.1rem; font-weight:700; cursor:pointer; transition:background 0.2s;
     }
-    #siguiente:hover { background: #1a4a8a; }
-    #siguiente:disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
+    #siguiente:hover { background:#1a4a8a; }
+    #siguiente:disabled { opacity:0.5; pointer-events:none; }
     .volver {
-      display: inline-block;
-      margin-top: 20px;
-      color: #0a2f6c;
-      background: #dce5f0;
-      padding: 12px 30px;
-      border-radius: 40px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background 0.2s;
-      text-align: center;
-      width: 100%;
+      display:inline-block; margin-top:20px; color:#0a2f6c; background:#dce5f0;
+      padding:12px 30px; border-radius:40px; text-decoration:none; font-weight:600;
+      transition:background 0.2s; width:100%; text-align:center;
     }
-    .volver:hover { background: #c0cee0; }
-    .footer { margin-top: 15px; font-size: 0.85rem; color: #4a6a8a; text-align: center; }
+    .volver:hover { background:#c0cee0; }
+    .footer { margin-top:15px; font-size:0.85rem; color:#4a6a8a; text-align:center; }
+    #mensaje-error { color:#e74c3c; margin-top:10px; text-align:center; }
   </style>
 </head>
 <body>
 <div class="container">
   <h1>🧠 <span>Chispa</span> Nica</h1>
   <div class="sub">Trivia Nicaragüense</div>
+  <div class="monedas" id="saldo">🪙 Cargando...</div>
 
   <div id="pregunta">Cargando pregunta...</div>
   <div class="opciones" id="opciones"></div>
@@ -143,110 +68,136 @@
   </div>
 
   <button id="siguiente" disabled>➡ Siguiente</button>
-  <a href="/../index.html" class="volver">🏠 Volver al inicio</a>
+  <div id="mensaje-error"></div>
+  <a href="../index.html" class="volver">🏠 Volver al inicio</a>
   <div class="footer">Chispa Nica – Aprende y gana</div>
 </div>
 
 <script>
-  (function() {
-    const preguntas = [
-      {
-        pregunta: "¿Cuál es la capital de Nicaragua?",
-        opciones: ["Managua", "León", "Granada", "Masaya"],
-        correcta: 0
-      },
-      {
-        pregunta: "¿En qué año se firmó el Tratado de Paz y Amistad entre Nicaragua y Honduras?",
-        opciones: ["1960", "1979", "1987", "1990"],
-        correcta: 2
-      },
-      {
-        pregunta: "¿Qué poeta nicaragüense es conocido como el 'Príncipe de las Letras Castellanas'?",
-        opciones: ["Rubén Darío", "Pablo Antonio Cuadra", "Ernesto Cardenal", "Gioconda Belli"],
-        correcta: 0
-      },
-      {
-        pregunta: "¿Cuál es el volcán más alto de Nicaragua?",
-        opciones: ["Concepción", "Momotombo", "San Cristóbal", "Maderas"],
-        correcta: 2
-      },
-      {
-        pregunta: "¿Qué deporte es el más popular en Nicaragua?",
-        opciones: ["Fútbol", "Béisbol", "Baloncesto", "Boxeo"],
-        correcta: 1
-      }
-    ];
+  // ---- SUPABASE ----
+  const SUPABASE_URL = 'https://tusupabaseurl.supabase.co';
+  const SUPABASE_ANON_KEY = 'tu-anon-key';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let indice = 0;
-    let puntaje = 0;
-    let respondida = false;
-    const preguntaEl = document.getElementById('pregunta');
-    const opcionesEl = document.getElementById('opciones');
-    const preguntaNum = document.getElementById('pregunta-num');
-    const puntajeEl = document.getElementById('puntaje');
-    const siguienteBtn = document.getElementById('siguiente');
+  // ---- ELEMENTOS ----
+  const saldoEl = document.getElementById('saldo');
+  const preguntaEl = document.getElementById('pregunta');
+  const opcionesEl = document.getElementById('opciones');
+  const preguntaNum = document.getElementById('pregunta-num');
+  const puntajeEl = document.getElementById('puntaje');
+  const siguienteBtn = document.getElementById('siguiente');
+  const errorEl = document.getElementById('mensaje-error');
 
-    function mostrarPregunta() {
-      respondida = false;
-      siguienteBtn.disabled = true;
-      const data = preguntas[indice];
-      preguntaEl.textContent = data.pregunta;
-      preguntaNum.textContent = `Pregunta ${indice+1}/${preguntas.length}`;
+  let userId = null;
+  let saldoActual = 0;
+  let indice = 0;
+  let puntaje = 0; // monedas ganadas en esta trivia
+  let respondida = false;
 
-      opcionesEl.innerHTML = '';
-      data.opciones.forEach((texto, idx) => {
-        const div = document.createElement('div');
-        div.className = 'opcion';
-        div.textContent = texto;
-        div.dataset.idx = idx;
-        div.addEventListener('click', () => seleccionarOpcion(idx));
-        opcionesEl.appendChild(div);
-      });
+  // ---- PREGUNTAS (5) ----
+  const preguntas = [
+    { pregunta: "¿Cuál es la capital de Nicaragua?", opciones: ["Managua","León","Granada","Masaya"], correcta:0 },
+    { pregunta: "¿En qué año se firmó el Tratado de Paz y Amistad entre Nicaragua y Honduras?", opciones: ["1960","1979","1987","1990"], correcta:2 },
+    { pregunta: "¿Qué poeta nicaragüense es conocido como el 'Príncipe de las Letras Castellanas'?", opciones: ["Rubén Darío","Pablo Antonio Cuadra","Ernesto Cardenal","Gioconda Belli"], correcta:0 },
+    { pregunta: "¿Cuál es el volcán más alto de Nicaragua?", opciones: ["Concepción","Momotombo","San Cristóbal","Maderas"], correcta:2 },
+    { pregunta: "¿Qué deporte es el más popular en Nicaragua?", opciones: ["Fútbol","Béisbol","Baloncesto","Boxeo"], correcta:1 }
+  ];
+  const MONEDAS_POR_ACIERTO = 10;
+
+  // ---- FUNCIONES SUPABASE ----
+  async function obtenerUsuarioYSaldo() {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) { errorEl.textContent='⚠️ Inicia sesión para jugar.'; return; }
+      userId = user.id;
+      const { data: profile, error: pfError } = await supabase
+        .from('profiles').select('coins').eq('id', userId).single();
+      if (pfError && pfError.code === 'PGRST116') {
+        await supabase.from('profiles').insert({ id: userId, coins: 0 });
+        saldoActual = 0;
+      } else if (pfError) throw pfError;
+      else saldoActual = profile?.coins || 0;
+      saldoEl.textContent = `🪙 ${saldoActual} monedas`;
+    } catch (err) { console.error(err); errorEl.textContent='Error al cargar datos.'; }
+  }
+
+  async function actualizarSaldo(nuevoSaldo) {
+    try {
+      const { error } = await supabase
+        .from('profiles').update({ coins: nuevoSaldo }).eq('id', userId);
+      if (error) throw error;
+      saldoActual = nuevoSaldo;
+      saldoEl.textContent = `🪙 ${saldoActual} monedas`;
+    } catch (err) { console.error(err); errorEl.textContent='Error al actualizar monedas.'; }
+  }
+
+  // ---- LÓGICA TRIVIA ----
+  function mostrarPregunta() {
+    respondida = false;
+    siguienteBtn.disabled = true;
+    const data = preguntas[indice];
+    preguntaEl.textContent = data.pregunta;
+    preguntaNum.textContent = `Pregunta ${indice+1}/${preguntas.length}`;
+    opcionesEl.innerHTML = '';
+    data.opciones.forEach((texto, idx) => {
+      const div = document.createElement('div');
+      div.className = 'opcion';
+      div.textContent = texto;
+      div.dataset.idx = idx;
+      div.addEventListener('click', () => seleccionarOpcion(idx));
+      opcionesEl.appendChild(div);
+    });
+  }
+
+  function seleccionarOpcion(idx) {
+    if (respondida) return;
+    const data = preguntas[indice];
+    const opciones = document.querySelectorAll('.opcion');
+    opciones.forEach((el, i) => {
+      el.classList.add('deshabilitado');
+      if (i === data.correcta) el.classList.add('correcta');
+      else if (i === idx && idx !== data.correcta) el.classList.add('incorrecta');
+      if (i === idx) el.classList.add('seleccionada');
+    });
+    if (idx === data.correcta) {
+      puntaje += MONEDAS_POR_ACIERTO;
+      puntajeEl.textContent = `⭐ ${puntaje} pts`;
     }
+    respondida = true;
+    siguienteBtn.disabled = false;
+  }
 
-    function seleccionarOpcion(idx) {
-      if (respondida) return;
-      const data = preguntas[indice];
-      const opciones = document.querySelectorAll('.opcion');
-      opciones.forEach((el, i) => {
-        el.classList.add('deshabilitado');
-        if (i === data.correcta) el.classList.add('correcta');
-        else if (i === idx && idx !== data.correcta) el.classList.add('incorrecta');
-        if (i === idx) el.classList.add('seleccionada');
-      });
-
-      if (idx === data.correcta) {
-        puntaje += 10;
-        puntajeEl.textContent = `⭐ ${puntaje} pts`;
-      }
-      respondida = true;
-      siguienteBtn.disabled = false;
-    }
-
-    function siguientePregunta() {
-      indice++;
-      if (indice < preguntas.length) {
-        mostrarPregunta();
+  async function siguientePregunta() {
+    indice++;
+    if (indice < preguntas.length) {
+      mostrarPregunta();
+    } else {
+      // Fin de la trivia: sumar puntaje al saldo
+      if (puntaje > 0) {
+        const nuevoSaldo = saldoActual + puntaje;
+        await actualizarSaldo(nuevoSaldo);
+        preguntaEl.innerHTML = `🎉 ¡Completaste la Trivia! Ganaste <strong>${puntaje}</strong> monedas.`;
       } else {
-        // Fin del juego
-        preguntaEl.textContent = '🎉 ¡Has completado la Trivia!';
-        opcionesEl.innerHTML = '';
-        preguntaNum.textContent = 'Fin';
-        siguienteBtn.disabled = true;
-        siguienteBtn.style.display = 'none';
-        // Mostrar puntaje final
-        const final = document.createElement('div');
-        final.style.cssText = 'font-size:2rem; font-weight:700; color:#0a2f6c; margin:20px 0;';
-        final.textContent = `Puntaje final: ${puntaje} pts`;
-        document.querySelector('.container').insertBefore(final, document.querySelector('.volver'));
+        preguntaEl.textContent = '😅 No ganaste monedas esta vez, ¡intenta de nuevo!';
       }
+      opcionesEl.innerHTML = '';
+      preguntaNum.textContent = 'Fin';
+      siguienteBtn.disabled = true;
+      siguienteBtn.style.display = 'none';
+      // Mostrar puntaje final
+      const finalDiv = document.createElement('div');
+      finalDiv.style.cssText = 'font-size:1.8rem; font-weight:700; color:#0a2f6c; margin:20px 0;';
+      finalDiv.textContent = `Monedas ganadas: ${puntaje}`;
+      document.querySelector('.container').insertBefore(finalDiv, document.querySelector('.volver'));
     }
+  }
 
-    siguienteBtn.addEventListener('click', siguientePregunta);
+  siguienteBtn.addEventListener('click', siguientePregunta);
 
-    // Iniciar
-    mostrarPregunta();
-  })();
+  // ---- INICIO ----
+  obtenerUsuarioYSaldo().then(() => {
+    if (userId) mostrarPregunta();
+  });
 </script>
 </body>
 </html>
