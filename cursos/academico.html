@@ -131,22 +131,16 @@
     <div id="modal-cuerpo"></div>
   </div>
 </div>
-
 <script>
   // ---------- CONFIGURACIÓN SUPABASE ----------
-  const SUPABASE_URL = 'https://tusupabaseurl.supabase.co';  // CAMBIAR
-  const SUPABASE_ANON_KEY = 'tu-anon-key';                  // CAMBIAR
+  const SUPABASE_URL = 'https://vrfdvythxysbhugrermx.supabase.co';  // CAMBIAR
+  const SUPABASE_ANON_KEY = 'sb_publishable_qomvhRRFkvrepVZkJgAJaw_JMLuWh_t';                  // CAMBIAR
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // ---------- DATOS DEL CURSO (hardcodeados según el enunciado) ----------
-  // Podrías obtenerlos de la BD, pero para simplificar los definimos aquí.
-  // Idealmente, obtendrías el course_id y module_id desde la URL o desde la BD.
-  const MODULE_ID = 1;  // ID del módulo en tu tabla
+  // ---------- DATOS DEL CURSO (hardcodeados para demo) ----------
+  const MODULE_ID = 1;
   const COURSE_ID = 1;
 
-  // Definición de las 8 lecciones (se almacenan en la tabla lessons)
-  // Asumimos que ya existen en la BD con estos puntos y orden.
-  // Para esta demo, usamos estos datos para mostrar, pero las actividades las tomamos de la BD.
   const leccionesData = [
     { id: 1, titulo: '¿Qué es el ajedrez?', puntos: 3, orden: 1 },
     { id: 2, titulo: 'Conociendo el tablero', puntos: 3, orden: 2 },
@@ -158,8 +152,6 @@
     { id: 8, titulo: 'Mi primera partida', puntos: 8, orden: 8 }
   ];
 
-  // Evaluación final: 10 preguntas (definidas en la tabla evaluations)
-  // Aquí las hardcodeamos para la demo (en la BD deben estar)
   const evaluationData = {
     id: 1,
     titulo: 'Evaluación Final – Ajedrez',
@@ -178,15 +170,7 @@
     passing_score: 6
   };
 
-  // ---------- VARIABLES GLOBALES ----------
-  let userId = null;
-  let saldoActual = 0;
-  let progreso = {}; // { lessonId: { completed, score, rewarded } }
-  let leccionesCompletadas = 0;
-  let badgeObtenida = false;
-  let evaluacionAprobada = false;
-  let evaluacionCompletada = false; // para no repetir
-
+  // ---------- ELEMENTOS DOM ----------
   const saldoEl = document.getElementById('saldo');
   const progresoTexto = document.getElementById('progreso-texto');
   const progressBar = document.getElementById('progress-bar');
@@ -194,6 +178,14 @@
   const btnEvaluacion = document.getElementById('btn-evaluacion');
   const errorEl = document.getElementById('mensaje-error');
   const badgesContainer = document.getElementById('badges-container');
+
+  // ---------- VARIABLES GLOBALES ----------
+  let userId = null;
+  let saldoActual = 0;
+  let progreso = {};
+  let leccionesCompletadas = 0;
+  let badgeObtenida = false;
+  let evaluacionCompletada = false;
 
   // Modal
   const modal = document.getElementById('modal');
@@ -203,40 +195,60 @@
 
   // ---------- FUNCIONES AUXILIARES ----------
   function mostrarError(msg) {
+    console.error(msg);
     errorEl.textContent = msg;
-    setTimeout(() => errorEl.textContent = '', 5000);
+    setTimeout(() => errorEl.textContent = '', 8000);
   }
 
   // ---------- SUPABASE: OBTENER USUARIO Y SALDO ----------
   async function obtenerUsuarioYSaldo() {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error || !user) {
-        errorEl.textContent = '⚠️ Debes iniciar sesión para acceder al curso.';
+      // 1. Obtener sesión
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) {
+        throw new Error('Error obteniendo sesión: ' + sessionError.message);
+      }
+      if (!sessionData.session) {
+        mostrarError('⚠️ No hay sesión iniciada. Inicia sesión para acceder al curso.');
         return false;
       }
-      userId = user.id;
 
-      // Obtener perfil
+      // 2. Obtener usuario
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        throw new Error('Error al obtener usuario: ' + (userError?.message || 'Usuario no encontrado'));
+      }
+      userId = user.id;
+      console.log('✅ Usuario autenticado:', userId);
+
+      // 3. Obtener perfil
       const { data: profile, error: pfError } = await supabase
         .from('profiles')
         .select('coins')
         .eq('id', userId)
         .single();
 
-      if (pfError && pfError.code === 'PGRST116') {
-        await supabase.from('profiles').insert({ id: userId, coins: 0 });
-        saldoActual = 0;
-      } else if (pfError) {
-        throw pfError;
+      if (pfError) {
+        if (pfError.code === 'PGRST116') {
+          // Perfil no existe, crearlo
+          console.log('Perfil no existe, creando...');
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({ id: userId, coins: 0 });
+          if (insertError) throw insertError;
+          saldoActual = 0;
+        } else {
+          throw pfError;
+        }
       } else {
         saldoActual = profile?.coins || 0;
       }
       saldoEl.textContent = `🪙 ${saldoActual} monedas`;
+      console.log('Saldo actual:', saldoActual);
       return true;
     } catch (err) {
-      console.error(err);
-      mostrarError('Error al cargar datos del usuario.');
+      console.error('❌ Error en obtenerUsuarioYSaldo:', err);
+      mostrarError('Error al cargar datos: ' + err.message);
       return false;
     }
   }
@@ -256,16 +268,15 @@
       data.forEach(p => {
         progreso[p.lesson_id] = { completed: p.completed, score: p.score, rewarded: p.rewarded };
       });
-      // Completar los que no tienen registro
       leccionesData.forEach(l => {
         if (!progreso[l.id]) {
           progreso[l.id] = { completed: false, score: 0, rewarded: false };
         }
       });
-      // Contar completadas
       leccionesCompletadas = Object.values(progreso).filter(p => p.completed).length;
+      console.log('Progreso cargado:', progreso);
     } catch (err) {
-      console.error(err);
+      console.error('Error al obtener progreso:', err);
       mostrarError('Error al obtener progreso.');
     }
   }
@@ -305,26 +316,26 @@
       const div = document.createElement('div');
       div.className = 'leccion';
       if (completado) div.classList.add('completado');
-      // Bloquear si la lección anterior no está completada (excepto la primera)
-      if (index > 0 && !progreso[leccionesData[index-1].id]?.completed) {
+
+      const anteriorCompletada = (index === 0) ? true : (progreso[leccionesData[index-1].id]?.completed || false);
+      if (!completado && !anteriorCompletada) {
         div.classList.add('bloqueado');
       }
 
       div.innerHTML = `
         <div class="info">
           <span class="titulo">${leccion.titulo}</span>
-          <span class="estado ${completado ? 'completado' : (index > 0 && !progreso[leccionesData[index-1].id]?.completed ? 'bloqueado' : '')}">
-            ${completado ? '✅ Completada' : (index > 0 && !progreso[leccionesData[index-1].id]?.completed ? '🔒 Bloqueada' : '📖 Disponible')}
+          <span class="estado ${completado ? 'completado' : (!anteriorCompletada ? 'bloqueado' : '')}">
+            ${completado ? '✅ Completada' : (!anteriorCompletada ? '🔒 Bloqueada' : '📖 Disponible')}
           </span>
           <span class="puntos">🪙 ${leccion.puntos}</span>
         </div>
         <div class="accion">${completado ? '✔️' : '▶️'}</div>
       `;
 
-      if (!completado && (index === 0 || progreso[leccionesData[index-1].id]?.completed)) {
+      if (!completado && anteriorCompletada) {
         div.addEventListener('click', () => abrirLeccion(leccion.id));
       } else if (completado) {
-        // Opcional: ver detalle
         div.addEventListener('click', () => {
           alert(`Lección "${leccion.titulo}" completada. Puntos obtenidos: ${leccion.puntos}`);
         });
@@ -333,14 +344,14 @@
       leccionesContainer.appendChild(div);
     });
 
-    // Habilitar botón de evaluación si todas completadas
+    // Botón de evaluación
     if (todasCompletadas && !evaluacionCompletada) {
       btnEvaluacion.disabled = false;
     } else {
       btnEvaluacion.disabled = true;
     }
 
-    // Actualizar barra de progreso
+    // Barra de progreso
     const porcentaje = Math.round((leccionesCompletadas / leccionesData.length) * 100);
     progressBar.style.width = `${porcentaje}%`;
     progresoTexto.textContent = `${porcentaje}% completado`;
@@ -348,10 +359,7 @@
 
   // ---------- ABRIR LECCIÓN (mostrar actividad) ----------
   async function abrirLeccion(lessonId) {
-    // Obtener la actividad de la lección desde la BD (suponiendo que cada lección tiene una actividad)
-    // En esta demo, crearemos una actividad genérica con una pregunta de la lección.
-    // Idealmente, tendrías una tabla activities con questions.
-    // Como ejemplo, generamos una pregunta por lección.
+    // Actividad de ejemplo (en producción vendría de la tabla activities)
     const preguntasEjemplo = [
       { pregunta: '¿El ajedrez es un juego de estrategia?', opciones: ['Sí', 'No'], correcta: 0 },
       { pregunta: '¿El tablero tiene 64 casillas?', opciones: ['Verdadero', 'Falso'], correcta: 0 },
@@ -364,7 +372,6 @@
     ];
     const actividad = preguntasEjemplo[lessonId-1] || { pregunta: 'Pregunta de ejemplo', opciones: ['A', 'B', 'C', 'D'], correcta: 0 };
 
-    // Mostrar modal
     modalTitulo.textContent = `Lección: ${leccionesData.find(l => l.id === lessonId).titulo}`;
     modalCuerpo.innerHTML = `
       <div class="pregunta">
@@ -391,11 +398,10 @@
       const respuesta = parseInt(seleccionado.value);
       const correcta = actividad.correcta;
       const aprobado = (respuesta === correcta);
-      const puntaje = aprobado ? 100 : 0; // asumimos 100% si acierta
+      const puntaje = aprobado ? 100 : 0;
       const btn = document.getElementById('btn-enviar-actividad');
       btn.disabled = true;
 
-      // Llamar a la RPC para otorgar recompensa
       try {
         const { data, error } = await supabase.rpc('award_lesson_reward', {
           p_user_id: userId,
@@ -410,11 +416,9 @@
           document.getElementById('resultado-actividad').innerHTML = `✅ ¡Correcto! Has ganado ${data.points_earned} monedas. Nuevo saldo: ${data.new_coins}`;
           saldoActual = data.new_coins;
           saldoEl.textContent = `🪙 ${saldoActual} monedas`;
-          // Actualizar progreso local
           progreso[lessonId] = { completed: true, score: puntaje, rewarded: true };
           leccionesCompletadas++;
           renderizarLecciones();
-          // Cerrar modal después de un momento
           setTimeout(() => { modal.style.display = 'none'; }, 2000);
         } else {
           document.getElementById('resultado-actividad').textContent = `❌ ${data.error || 'No aprobado o ya recompensado.'}`;
@@ -434,7 +438,6 @@
       alert('Ya completaste la evaluación.');
       return;
     }
-    // Mostrar modal con las 10 preguntas
     modalTitulo.textContent = evaluationData.titulo;
     let html = `<p>Responde las 10 preguntas. Mínimo ${evaluationData.passing_score} aciertos para aprobar.</p>`;
     evaluationData.preguntas.forEach((p, idx) => {
@@ -460,7 +463,6 @@
       const btn = document.getElementById('btn-enviar-evaluacion');
       btn.disabled = true;
 
-      // Calcular puntaje
       let aciertos = 0;
       for (let i = 0; i < evaluationData.preguntas.length; i++) {
         const selected = document.querySelector(`input[name="eval_${i}"]:checked`);
@@ -470,7 +472,6 @@
         }
       }
 
-      // Llamar RPC para evaluación
       try {
         const { data, error } = await supabase.rpc('award_evaluation', {
           p_user_id: userId,
@@ -493,7 +494,6 @@
           saldoEl.textContent = `🪙 ${saldoActual} monedas`;
           evaluacionCompletada = true;
           btnEvaluacion.disabled = true;
-          // Cerrar modal después
           setTimeout(() => { modal.style.display = 'none'; }, 3000);
         } else {
           document.getElementById('resultado-evaluacion').textContent = `❌ ${data.error || 'No aprobado. Vuelve a intentarlo.'}`;
@@ -513,11 +513,16 @@
 
   // ---------- INICIALIZAR ----------
   async function init() {
+    console.log('🚀 Iniciando curso académico...');
     const ok = await obtenerUsuarioYSaldo();
-    if (!ok) return;
+    if (!ok) {
+      console.log('❌ No se pudo obtener usuario. Deteniendo inicialización.');
+      return;
+    }
     await obtenerProgreso();
     await obtenerInsignias();
     renderizarLecciones();
+    console.log('✅ Inicialización completa.');
   }
 
   init();
