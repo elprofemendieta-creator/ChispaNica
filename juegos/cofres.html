@@ -1,200 +1,199 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chispa Nica – Cofres</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
     body {
       background: linear-gradient(145deg, #0a2f6c 0%, #1a4a8a 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px;
     }
     .container {
       background: rgba(255,255,255,0.95);
-      max-width: 700px;
-      width: 100%;
-      border-radius: 40px;
-      padding: 30px 25px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-      text-align: center;
+      max-width:700px; width:100%; border-radius:40px; padding:30px 25px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.5); text-align:center;
     }
-    h1 {
-      color: #0a2f6c;
-      font-size: 2.2rem;
-      margin-bottom: 5px;
-    }
-    h1 span { color: #f1c40f; }
-    .sub {
-      color: #1a4a8a;
-      font-weight: 600;
-      margin-bottom: 25px;
-      font-size: 1.1rem;
+    h1 { color:#0a2f6c; font-size:2.2rem; }
+    h1 span { color:#f1c40f; }
+    .sub { color:#1a4a8a; font-weight:600; margin-bottom:5px; font-size:1.1rem; }
+    .monedas {
+      background:#0a2f6c; color:#fff; padding:6px 20px; border-radius:40px;
+      display:inline-block; font-weight:700; margin:10px auto;
     }
     .cofres-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin: 25px 0;
+      display:grid; grid-template-columns:repeat(4,1fr); gap:15px; margin:25px 0;
     }
     .cofre {
-      background: #f1c40f;
-      border-radius: 20px;
-      padding: 20px 10px;
-      font-size: 3.5rem;
-      cursor: pointer;
-      box-shadow: 0 8px 0 #b38f0c;
-      transition: all 0.1s ease;
-      user-select: none;
-      aspect-ratio: 1/1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background:#f1c40f; border-radius:20px; padding:20px 10px; font-size:3.5rem;
+      cursor:pointer; box-shadow:0 8px 0 #b38f0c; transition:all 0.1s;
+      user-select:none; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
     }
-    .cofre:active {
-      transform: translateY(8px);
-      box-shadow: 0 0 0 #b38f0c;
-    }
-    .cofre.abierto {
-      transform: translateY(8px);
-      box-shadow: 0 0 0 #b38f0c;
-      cursor: default;
-    }
-    .cofre.deshabilitado {
-      opacity: 0.5;
-      transform: translateY(4px);
-      box-shadow: 0 4px 0 #b38f0c;
-      pointer-events: none;
-    }
-    #mensaje {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #0a2f6c;
-      min-height: 4rem;
-      padding: 10px;
-      background: #eef4ff;
-      border-radius: 30px;
-      margin: 15px 0;
-    }
+    .cofre:active { transform:translateY(8px); box-shadow:0 0 0 #b38f0c; }
+    .cofre.abierto { transform:translateY(8px); box-shadow:0 0 0 #b38f0c; cursor:default; }
+    .cofre.deshabilitado { opacity:0.5; transform:translateY(4px); box-shadow:0 4px 0 #b38f0c; pointer-events:none; }
+    #mensaje { font-size:1.6rem; font-weight:700; color:#0a2f6c; min-height:4rem; padding:10px; background:#eef4ff; border-radius:30px; margin:15px 0; }
     #reiniciar {
-      background: #0a2f6c;
-      border: none;
-      color: #fff;
-      padding: 12px 35px;
-      border-radius: 60px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s;
-      margin: 5px 0 15px;
+      background:#0a2f6c; border:none; color:#fff; padding:12px 35px; border-radius:60px;
+      font-size:1.1rem; font-weight:700; cursor:pointer; transition:background 0.2s; margin:5px 0 15px;
     }
-    #reiniciar:hover { background: #1a4a8a; }
+    #reiniciar:hover { background:#1a4a8a; }
     .volver {
-      display: inline-block;
-      margin-top: 15px;
-      color: #0a2f6c;
-      background: #dce5f0;
-      padding: 12px 30px;
-      border-radius: 40px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background 0.2s;
+      display:inline-block; margin-top:15px; color:#0a2f6c; background:#dce5f0;
+      padding:12px 30px; border-radius:40px; text-decoration:none; font-weight:600;
+      transition:background 0.2s;
     }
-    .volver:hover { background: #c0cee0; }
-    .footer { margin-top: 15px; font-size: 0.85rem; color: #4a6a8a; }
+    .volver:hover { background:#c0cee0; }
+    .footer { margin-top:15px; font-size:0.85rem; color:#4a6a8a; }
+    #mensaje-error { color:#e74c3c; margin-top:10px; }
   </style>
 </head>
 <body>
 <div class="container">
   <h1>📦 <span>Chispa</span> Nica</h1>
   <div class="sub">Cofres del Tesoro</div>
+  <div class="monedas" id="saldo">🪙 Cargando...</div>
 
   <div class="cofres-grid" id="cofresGrid"></div>
 
   <div id="mensaje">Elige un cofre</div>
   <button id="reiniciar" style="display:none;">🔄 Jugar de nuevo</button>
-  <a href="/../index.html" class="volver">🏠 Volver al inicio</a>
+  <div id="mensaje-error"></div>
+  <a href="../index.html" class="volver">🏠 Volver al inicio</a>
   <div class="footer">Chispa Nica – Aprende y gana</div>
 </div>
 
 <script>
-  (function() {
-    const premios = [
-      '🎁 10 pts', '🎁 20 pts', '🎁 50 pts', '🎁 100 pts',
-      '💎 Bono extra', '🌟 Sorpresa', '🔄 Intenta de nuevo', '🎉 ¡Genial!'
-    ];
-    const grid = document.getElementById('cofresGrid');
-    const mensaje = document.getElementById('mensaje');
-    const reiniciarBtn = document.getElementById('reiniciar');
+  // ---- SUPABASE ----
+  const SUPABASE_URL = 'https://tusupabaseurl.supabase.co';
+  const SUPABASE_ANON_KEY = 'tu-anon-key';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let cofres = [];
-    let abiertos = [];
-    let juegoTerminado = false;
+  // ---- ELEMENTOS ----
+  const saldoEl = document.getElementById('saldo');
+  const grid = document.getElementById('cofresGrid');
+  const mensaje = document.getElementById('mensaje');
+  const reiniciarBtn = document.getElementById('reiniciar');
+  const errorEl = document.getElementById('mensaje-error');
 
-    function generarCofres() {
-      // Asignar premios aleatorios a 4 cofres
-      const seleccionados = [];
-      for (let i = 0; i < 4; i++) {
-        const idx = Math.floor(Math.random() * premios.length);
-        seleccionados.push(premios[idx]);
+  let userId = null;
+  let saldoActual = 0;
+  let cofres = [];
+  let abiertos = [];
+  let juegoTerminado = false;
+  let totalGanado = 0; // acumulado de este juego
+
+  // ---- DEFINICIÓN DE PREMIOS (valor en monedas) ----
+  const premios = [
+    { emoji: '🎁', texto: '10 pts', valor: 10 },
+    { emoji: '🎁', texto: '20 pts', valor: 20 },
+    { emoji: '🎁', texto: '50 pts', valor: 50 },
+    { emoji: '🎁', texto: '100 pts', valor: 100 },
+    { emoji: '💎', texto: 'Bono extra', valor: 30 },
+    { emoji: '🌟', texto: 'Sorpresa', valor: 25 },
+    { emoji: '🔄', texto: 'Intenta de nuevo', valor: 0 },
+    { emoji: '🎉', texto: '¡Genial!', valor: 15 }
+  ];
+
+  // ---- FUNCIONES SUPABASE ----
+  async function obtenerUsuarioYSaldo() {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) { errorEl.textContent='⚠️ Inicia sesión para jugar.'; return; }
+      userId = user.id;
+      const { data: profile, error: pfError } = await supabase
+        .from('profiles').select('coins').eq('id', userId).single();
+      if (pfError && pfError.code === 'PGRST116') {
+        await supabase.from('profiles').insert({ id: userId, coins: 0 });
+        saldoActual = 0;
+      } else if (pfError) throw pfError;
+      else saldoActual = profile?.coins || 0;
+      saldoEl.textContent = `🪙 ${saldoActual} monedas`;
+    } catch (err) { console.error(err); errorEl.textContent='Error al cargar datos.'; }
+  }
+
+  async function actualizarSaldo(nuevoSaldo) {
+    try {
+      const { error } = await supabase
+        .from('profiles').update({ coins: nuevoSaldo }).eq('id', userId);
+      if (error) throw error;
+      saldoActual = nuevoSaldo;
+      saldoEl.textContent = `🪙 ${saldoActual} monedas`;
+    } catch (err) { console.error(err); errorEl.textContent='Error al actualizar monedas.'; }
+  }
+
+  // ---- LÓGICA COFRES ----
+  function generarCofres() {
+    const seleccionados = [];
+    for (let i=0; i<4; i++) {
+      const idx = Math.floor(Math.random() * premios.length);
+      seleccionados.push(premios[idx]);
+    }
+    return seleccionados;
+  }
+
+  function renderizarCofres() {
+    grid.innerHTML = '';
+    cofres.forEach((premio, idx) => {
+      const div = document.createElement('div');
+      div.className = 'cofre';
+      if (abiertos[idx]) {
+        div.classList.add('abierto');
+        div.textContent = premio.emoji;
+      } else {
+        div.textContent = '📦';
       }
-      return seleccionados;
-    }
-
-    function renderizarCofres() {
-      grid.innerHTML = '';
-      cofres.forEach((premio, idx) => {
-        const div = document.createElement('div');
-        div.className = 'cofre';
-        if (abiertos[idx]) {
-          div.classList.add('abierto');
-          div.textContent = premio.split(' ')[0]; // solo emoji
-        } else {
-          div.textContent = '📦';
-        }
-        div.dataset.idx = idx;
-        if (!abiertos[idx] && !juegoTerminado) {
-          div.addEventListener('click', () => abrirCofre(idx));
-        } else {
-          div.classList.add('deshabilitado');
-        }
-        grid.appendChild(div);
-      });
-    }
-
-    function abrirCofre(idx) {
-      if (abiertos[idx] || juegoTerminado) return;
-      abiertos[idx] = true;
-      const premio = cofres[idx];
-      mensaje.textContent = `✨ ¡Obtuviste: ${premio}!`;
-      renderizarCofres();
-
-      // Ver si ya se abrieron todos
-      if (abiertos.every(v => v === true)) {
-        juegoTerminado = true;
-        reiniciarBtn.style.display = 'inline-block';
-        mensaje.textContent += ' 🎊 ¡Cofres completados!';
+      div.dataset.idx = idx;
+      if (!abiertos[idx] && !juegoTerminado && userId) {
+        div.addEventListener('click', () => abrirCofre(idx));
+      } else {
+        div.classList.add('deshabilitado');
       }
-    }
+      grid.appendChild(div);
+    });
+  }
 
-    function reiniciar() {
+  async function abrirCofre(idx) {
+    if (abiertos[idx] || juegoTerminado || !userId) return;
+    abiertos[idx] = true;
+    const premio = cofres[idx];
+    totalGanado += premio.valor;
+    mensaje.textContent = `✨ ¡Obtuviste: ${premio.emoji} ${premio.texto} (${premio.valor} monedas)!`;
+    renderizarCofres();
+
+    // Ver si todos abiertos
+    if (abiertos.every(v => v === true)) {
+      juegoTerminado = true;
+      reiniciarBtn.style.display = 'inline-block';
+      // Actualizar saldo final
+      const nuevoSaldo = saldoActual + totalGanado;
+      await actualizarSaldo(nuevoSaldo);
+      mensaje.textContent += ` 🎊 ¡Ganaste en total ${totalGanado} monedas!`;
+    }
+  }
+
+  function reiniciar() {
+    cofres = generarCofres();
+    abiertos = [false, false, false, false];
+    juegoTerminado = false;
+    totalGanado = 0;
+    reiniciarBtn.style.display = 'none';
+    mensaje.textContent = 'Elige un cofre';
+    renderizarCofres();
+  }
+
+  reiniciarBtn.addEventListener('click', reiniciar);
+
+  // ---- INICIO ----
+  obtenerUsuarioYSaldo().then(() => {
+    if (userId) {
       cofres = generarCofres();
-      abiertos = [false, false, false, false];
-      juegoTerminado = false;
-      reiniciarBtn.style.display = 'none';
-      mensaje.textContent = 'Elige un cofre';
+      abiertos = [false,false,false,false];
       renderizarCofres();
     }
-
-    // Iniciar
-    reiniciar();
-
-    reiniciarBtn.addEventListener('click', reiniciar);
-  })();
+  });
 </script>
 </body>
 </html>
