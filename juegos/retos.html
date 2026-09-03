@@ -1,110 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chispa Nica – Retos</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
     body {
       background: linear-gradient(145deg, #0a2f6c 0%, #1a4a8a 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px;
     }
     .container {
       background: rgba(255,255,255,0.95);
-      max-width: 700px;
-      width: 100%;
-      border-radius: 40px;
-      padding: 30px 25px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-      text-align: center;
+      max-width:700px; width:100%; border-radius:40px; padding:30px 25px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.5); text-align:center;
     }
-    h1 {
-      color: #0a2f6c;
-      font-size: 2.2rem;
-      margin-bottom: 5px;
-    }
-    h1 span { color: #f1c40f; }
-    .sub {
-      color: #1a4a8a;
-      font-weight: 600;
-      margin-bottom: 25px;
-      font-size: 1.1rem;
-    }
-    .icono-grande {
-      font-size: 5rem;
-      margin: 20px 0 10px;
-    }
-    .mensaje {
-      font-size: 1.3rem;
-      color: #0a2f6c;
-      margin: 20px 0;
-      line-height: 1.6;
-    }
+    h1 { color:#0a2f6c; font-size:2.2rem; }
+    h1 span { color:#f1c40f; }
+    .sub { color:#1a4a8a; font-weight:600; margin-bottom:25px; font-size:1.1rem; }
+    .icono-grande { font-size:5rem; margin:20px 0 10px; }
+    .mensaje { font-size:1.3rem; color:#0a2f6c; margin:20px 0; line-height:1.6; }
     .lista-retos {
-      text-align: left;
-      background: #eef4ff;
-      border-radius: 30px;
-      padding: 20px 25px;
-      margin: 20px 0;
-      list-style: none;
+      text-align:left; background:#eef4ff; border-radius:30px; padding:20px 25px;
+      margin:20px 0; list-style:none;
     }
     .lista-retos li {
-      padding: 12px 0;
-      border-bottom: 1px solid #c0cee0;
-      font-weight: 500;
-      color: #0a2f6c;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      padding:12px 0; border-bottom:1px solid #c0cee0; font-weight:500; color:#0a2f6c;
+      display:flex; align-items:center; gap:12px;
     }
-    .lista-retos li:last-child { border-bottom: none; }
-    .lista-retos li::before {
-      content: '⏳';
-      font-size: 1.5rem;
-    }
+    .lista-retos li:last-child { border-bottom:none; }
+    .lista-retos li::before { content:'⏳'; font-size:1.5rem; }
     .volver {
-      display: inline-block;
-      margin-top: 15px;
-      color: #0a2f6c;
-      background: #dce5f0;
-      padding: 12px 30px;
-      border-radius: 40px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background 0.2s;
+      display:inline-block; margin-top:15px; color:#0a2f6c; background:#dce5f0;
+      padding:12px 30px; border-radius:40px; text-decoration:none; font-weight:600;
+      transition:background 0.2s;
     }
-    .volver:hover { background: #c0cee0; }
-    .footer { margin-top: 15px; font-size: 0.85rem; color: #4a6a8a; }
+    .volver:hover { background:#c0cee0; }
+    .footer { margin-top:15px; font-size:0.85rem; color:#4a6a8a; }
   </style>
 </head>
 <body>
 <div class="container">
   <h1>⚡ <span>Chispa</span> Nica</h1>
   <div class="sub">Retos Especiales</div>
-
   <div class="icono-grande">🚧</div>
-  <div class="mensaje">
-    ¡Próximamente! <br>
-    Estamos preparando retos emocionantes como:
-  </div>
-
+  <div class="mensaje">¡Próximamente! <br>Estamos preparando retos emocionantes como:</div>
   <ul class="lista-retos">
     <li>Navegar en la tienda de Chispa Nica</li>
     <li>Visitar un curso interactivo</li>
     <li>Completar misiones diarias</li>
     <li>Desafíos de velocidad</li>
   </ul>
-
-  <div class="mensaje" style="font-size:1rem; color:#1a4a8a;">
-    Vuelve pronto para descubrir nuevas aventuras.
-  </div>
-
-  <a href="/../index.html" class="volver">🏠 Volver al inicio</a>
+  <div class="mensaje" style="font-size:1rem; color:#1a4a8a;">Vuelve pronto para descubrir nuevas aventuras.</div>
+  <a href="../index.html" class="volver">🏠 Volver al inicio</a>
   <div class="footer">Chispa Nica – Aprende y gana</div>
 </div>
 </body>
