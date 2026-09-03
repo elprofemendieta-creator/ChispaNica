@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chispa Nica – Ruleta</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body {
+      background: linear-gradient(145deg, #0a2f6c 0%, #1a4a8a 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(255,255,255,0.95);
+      max-width: 700px;
+      width: 100%;
+      border-radius: 40px;
+      padding: 30px 25px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+    h1 {
+      color: #0a2f6c;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    h1 span { color: #f1c40f; }
+    .sub {
+      color: #1a4a8a;
+      font-weight: 600;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto 20px;
+      width: 100%;
+      max-width: 400px;
+      aspect-ratio: 1/1;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    canvas:hover { transform: scale(1.02); }
+    .btn-girar {
+      background: #f1c40f;
+      border: none;
+      color: #0a2f6c;
+      font-size: 1.5rem;
+      font-weight: 700;
+      padding: 14px 40px;
+      border-radius: 60px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #b38f0c;
+      transition: all 0.1s ease;
+      margin: 10px 0 20px;
+    }
+    .btn-girar:active {
+      transform: translateY(6px);
+      box-shadow: 0 0 0 #b38f0c;
+    }
+    .btn-girar:disabled {
+      opacity: 0.6;
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #b38f0c;
+      pointer-events: none;
+    }
+    #resultado {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0a2f6c;
+      min-height: 3.5rem;
+      padding: 10px;
+      background: #eef4ff;
+      border-radius: 30px;
+      margin: 10px 0 20px;
+    }
+    .volver {
+      display: inline-block;
+      margin-top: 15px;
+      color: #0a2f6c;
+      background: #dce5f0;
+      padding: 12px 30px;
+      border-radius: 40px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .volver:hover { background: #c0cee0; }
+    .footer { margin-top: 15px; font-size: 0.85rem; color: #4a6a8a; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🎡 <span>Chispa</span> Nica</h1>
+  <div class="sub">Ruleta de la Fortuna</div>
+
+  <canvas id="ruletaCanvas" width="400" height="400"></canvas>
+
+  <button class="btn-girar" id="btnGirar">🎲 GIRAR</button>
+  <div id="resultado">¡Toca girar!</div>
+
+  <a href="index.html" class="volver">🏠 Volver al inicio</a>
+  <div class="footer">Chispa Nica – Aprende y gana</div>
+</div>
+
+<script>
+  (function() {
+    const canvas = document.getElementById('ruletaCanvas');
+    const ctx = canvas.getContext('2d');
+    const btn = document.getElementById('btnGirar');
+    const resultado = document.getElementById('resultado');
+
+    // Premios (puedes ajustarlos)
+    const premios = [
+      '10 pts', '20 pts', '50 pts', '100 pts',
+      '¡Bono!', '💀 Perdiste', '🔄 Otra vez', '🎁 Sorpresa'
+    ];
+    const colores = [
+      '#f94144', '#f3722c', '#f8961e', '#f9c74f',
+      '#90be6d', '#43aa8b', '#577590', '#277da1'
+    ];
+    const numSectores = premios.length;
+    const angulo = (2 * Math.PI) / numSectores;
+
+    let girando = false;
+    let anguloActual = 0; // en radianes
+
+    function dibujarRuleta(rotacion) {
+      ctx.clearRect(0, 0, 400, 400);
+      const centro = 200, radio = 190;
+
+      for (let i = 0; i < numSectores; i++) {
+        const inicio = i * angulo + rotacion;
+        const fin = inicio + angulo;
+        ctx.beginPath();
+        ctx.moveTo(centro, centro);
+        ctx.arc(centro, centro, radio, inicio, fin);
+        ctx.closePath();
+        ctx.fillStyle = colores[i % colores.length];
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Texto
+        ctx.save();
+        ctx.translate(centro, centro);
+        ctx.rotate(inicio + angulo / 2);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 18px "Segoe UI", sans-serif';
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 6;
+        ctx.fillText(premios[i], radio * 0.65, 0);
+        ctx.restore();
+      }
+
+      // Círculo central
+      ctx.beginPath();
+      ctx.arc(centro, centro, 28, 0, 2 * Math.PI);
+      ctx.fillStyle = '#f1c40f';
+      ctx.fill();
+      ctx.strokeStyle = '#0a2f6c';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.fillStyle = '#0a2f6c';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('★', centro, centro+2);
+
+      // Flecha indicadora (arriba)
+      ctx.beginPath();
+      ctx.moveTo(200, 12);
+      ctx.lineTo(190, 28);
+      ctx.lineTo(210, 28);
+      ctx.closePath();
+      ctx.fillStyle = '#e63946';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function obtenerPremio(rotacion) {
+      // Normalizar rotación
+      let r = rotacion % (2 * Math.PI);
+      if (r < 0) r += 2 * Math.PI;
+      // La flecha apunta al norte (ángulo -PI/2)
+      const anguloFlecha = -Math.PI / 2;
+      let diff = (anguloFlecha - r + 2 * Math.PI) % (2 * Math.PI);
+      let indice = Math.floor(diff / angulo) % numSectores;
+      return premios[indice];
+    }
+
+    function girarRuleta() {
+      if (girando) return;
+      girando = true;
+      btn.disabled = true;
+      resultado.textContent = '⏳ Girando...';
+
+      const giros = 5 + Math.random() * 5; // entre 5 y 10 vueltas
+      const anguloFinal = giros * 2 * Math.PI + Math.random() * 2 * Math.PI;
+      const duracion = 3000; // ms
+      const inicio = performance.now();
+      const anguloInicial = anguloActual;
+
+      function animar(timestamp) {
+        const elapsed = timestamp - inicio;
+        const progreso = Math.min(elapsed / duracion, 1);
+        // easeOutCubic
+        const ease = 1 - Math.pow(1 - progreso, 3);
+        const rotacion = anguloInicial + anguloFinal * ease;
+        dibujarRuleta(rotacion);
+
+        if (progreso < 1) {
+          requestAnimationFrame(animar);
+        } else {
+          anguloActual = (anguloInicial + anguloFinal) % (2 * Math.PI);
+          const premio = obtenerPremio(anguloActual);
+          resultado.innerHTML = `🎉 <strong>${premio}</strong>`;
+          girando = false;
+          btn.disabled = false;
+        }
+      }
+
+      requestAnimationFrame(animar);
+    }
+
+    // Dibujo inicial
+    dibujarRuleta(0);
+
+    btn.addEventListener('click', girarRuleta);
+    // También al hacer clic en el canvas
+    canvas.addEventListener('click', girarRuleta);
+  })();
+</script>
+</body>
+</html>
