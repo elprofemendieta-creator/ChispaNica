@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chispa Nica – Curso Académico</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+    body {
+      background: linear-gradient(145deg, #0a2f6c 0%, #1a4a8a 100%);
+      min-height:100vh; padding:20px;
+      display: flex; justify-content: center; align-items: flex-start;
+    }
+    .container {
+      max-width:900px; width:100%; background:rgba(255,255,255,0.95);
+      border-radius:40px; padding:30px 25px; box-shadow:0 20px 40px rgba(0,0,0,0.5);
+    }
+    h1 { color:#0a2f6c; font-size:2.2rem; margin-bottom:5px; }
+    h1 span { color:#f1c40f; }
+    .sub { color:#1a4a8a; font-weight:600; margin-bottom:10px; font-size:1.1rem; }
+    .top-bar {
+      display:flex; justify-content:space-between; align-items:center;
+      flex-wrap:wrap; gap:10px; background:#eef4ff; padding:10px 20px;
+      border-radius:40px; margin:15px 0;
+    }
+    .monedas, .progreso-texto {
+      font-weight:700; color:#0a2f6c;
+    }
+    .progress-bar {
+      width:100%; height:12px; background:#dce5f0; border-radius:20px;
+      overflow:hidden; margin:5px 0 15px;
+    }
+    .progress-bar div {
+      height:100%; background:#f1c40f; width:0%;
+      transition: width 0.3s;
+    }
+    .leccion {
+      background:#fff; border:2px solid #c0cee0; border-radius:20px;
+      padding:15px 20px; margin-bottom:12px;
+      display:flex; justify-content:space-between; align-items:center;
+      cursor:pointer; transition:all 0.2s;
+    }
+    .leccion:hover:not(.bloqueado) { border-color:#1a4a8a; background:#f8faff; }
+    .leccion.bloqueado { opacity:0.6; cursor:not-allowed; }
+    .leccion.completado { border-color:#2ecc71; background:#f0fff4; }
+    .leccion .info { display:flex; align-items:center; gap:15px; flex-wrap:wrap; }
+    .leccion .titulo { font-weight:600; color:#0a2f6c; }
+    .leccion .estado {
+      font-size:0.9rem; background:#dce5f0; padding:4px 12px; border-radius:20px;
+      color:#0a2f6c; font-weight:600;
+    }
+    .leccion .estado.completado { background:#2ecc71; color:#fff; }
+    .leccion .estado.bloqueado { background:#e74c3c; color:#fff; }
+    .leccion .puntos { background:#f1c40f; padding:4px 12px; border-radius:20px; font-weight:700; }
+    .leccion .accion { font-size:1.2rem; }
+    .modal {
+      display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.5); justify-content:center; align-items:center;
+      z-index:1000;
+    }
+    .modal-contenido {
+      background:#fff; max-width:600px; width:90%; border-radius:40px;
+      padding:30px; max-height:90vh; overflow-y:auto;
+      position:relative;
+    }
+    .modal-contenido h2 { color:#0a2f6c; margin-bottom:15px; }
+    .modal-contenido .cerrar {
+      position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer;
+      color:#0a2f6c;
+    }
+    .pregunta { margin:15px 0; }
+    .pregunta p { font-weight:600; }
+    .opciones { display:flex; flex-direction:column; gap:8px; margin:10px 0; }
+    .opciones label {
+      background:#eef4ff; padding:10px 15px; border-radius:30px;
+      cursor:pointer; transition:background 0.2s;
+    }
+    .opciones label:hover { background:#dce5f0; }
+    .opciones input[type="radio"] { margin-right:10px; }
+    .btn-enviar {
+      background:#0a2f6c; color:#fff; border:none; padding:12px 30px;
+      border-radius:60px; font-size:1.1rem; font-weight:700; cursor:pointer;
+      margin-top:15px;
+    }
+    .btn-enviar:disabled { opacity:0.5; cursor:not-allowed; }
+    .resultado { margin-top:15px; font-weight:700; }
+    .badge {
+      display:inline-block; background:#f1c40f; padding:5px 15px;
+      border-radius:30px; font-weight:700; margin:5px 0;
+    }
+    .volver {
+      display:inline-block; margin-top:20px; color:#0a2f6c;
+      background:#dce5f0; padding:12px 30px; border-radius:40px;
+      text-decoration:none; font-weight:600; transition:background 0.2s;
+    }
+    .volver:hover { background:#c0cee0; }
+    #mensaje-error { color:#e74c3c; margin:10px 0; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>♟️ <span>Chispa</span> Nica</h1>
+  <div class="sub">Curso Académico – Módulo 1: Conociendo el Ajedrez</div>
+
+  <div class="top-bar">
+    <span class="monedas" id="saldo">🪙 Cargando...</span>
+    <span class="progreso-texto" id="progreso-texto">0% completado</span>
+  </div>
+  <div class="progress-bar"><div id="progress-bar" style="width:0%;"></div></div>
+
+  <div id="lecciones-container"></div>
+
+  <div style="margin:20px 0; text-align:center;">
+    <button id="btn-evaluacion" class="btn-enviar" style="background:#f1c40f; color:#0a2f6c;" disabled>
+      📝 Ir a Evaluación Final
+    </button>
+  </div>
+
+  <div id="badges-container"></div>
+  <div id="mensaje-error"></div>
+
+  <a href="../index.html" class="volver">🏠 Volver al inicio</a>
+</div>
+
+<!-- Modal para actividad / lección -->
+<div id="modal" class="modal">
+  <div class="modal-contenido">
+    <span class="cerrar" id="modal-cerrar">&times;</span>
+    <h2 id="modal-titulo">Lección</h2>
+    <div id="modal-cuerpo"></div>
+  </div>
+</div>
+
+<script>
+  // ---------- CONFIGURACIÓN SUPABASE ----------
+  const SUPABASE_URL = 'https://tusupabaseurl.supabase.co';  // CAMBIAR
+  const SUPABASE_ANON_KEY = 'tu-anon-key';                  // CAMBIAR
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ---------- DATOS DEL CURSO (hardcodeados según el enunciado) ----------
+  // Podrías obtenerlos de la BD, pero para simplificar los definimos aquí.
+  // Idealmente, obtendrías el course_id y module_id desde la URL o desde la BD.
+  const MODULE_ID = 1;  // ID del módulo en tu tabla
+  const COURSE_ID = 1;
+
+  // Definición de las 8 lecciones (se almacenan en la tabla lessons)
+  // Asumimos que ya existen en la BD con estos puntos y orden.
+  // Para esta demo, usamos estos datos para mostrar, pero las actividades las tomamos de la BD.
+  const leccionesData = [
+    { id: 1, titulo: '¿Qué es el ajedrez?', puntos: 3, orden: 1 },
+    { id: 2, titulo: 'Conociendo el tablero', puntos: 3, orden: 2 },
+    { id: 3, titulo: 'El Rey y la Reina', puntos: 5, orden: 3 },
+    { id: 4, titulo: 'Torres y Alfiles', puntos: 5, orden: 4 },
+    { id: 5, titulo: 'El Caballo', puntos: 5, orden: 5 },
+    { id: 6, titulo: 'Los Peones', puntos: 5, orden: 6 },
+    { id: 7, titulo: 'Jaque, jaque mate y tablas', puntos: 6, orden: 7 },
+    { id: 8, titulo: 'Mi primera partida', puntos: 8, orden: 8 }
+  ];
+
+  // Evaluación final: 10 preguntas (definidas en la tabla evaluations)
+  // Aquí las hardcodeamos para la demo (en la BD deben estar)
+  const evaluationData = {
+    id: 1,
+    titulo: 'Evaluación Final – Ajedrez',
+    preguntas: [
+      { pregunta: '¿Cuántas casillas tiene un tablero de ajedrez?', opciones: ['64', '81', '100', '32'], correcta: 0 },
+      { pregunta: '¿Qué pieza se mueve en forma de "L"?', opciones: ['Alfil', 'Caballo', 'Torre', 'Reina'], correcta: 1 },
+      { pregunta: '¿Cuál es el valor aproximado de un caballo?', opciones: ['3 puntos', '5 puntos', '1 punto', '9 puntos'], correcta: 0 },
+      { pregunta: '¿Qué pieza solo se mueve en diagonal?', opciones: ['Torre', 'Alfil', 'Caballo', 'Peón'], correcta: 1 },
+      { pregunta: '¿Qué pieza puede moverse en cualquier dirección?', opciones: ['Reina', 'Rey', 'Alfil', 'Caballo'], correcta: 0 },
+      { pregunta: '¿Cuántos peones tiene cada jugador al inicio?', opciones: ['8', '16', '6', '10'], correcta: 0 },
+      { pregunta: '¿Qué es el enroque?', opciones: ['Un movimiento especial de rey y torre', 'Un jaque', 'Un movimiento de peón', 'Ninguna'], correcta: 0 },
+      { pregunta: '¿Qué significa "jaque mate"?', opciones: ['El rey está en jaque y no puede escapar', 'El rey está en jaque', 'Tablas', 'Pierde la reina'], correcta: 0 },
+      { pregunta: '¿Cuántas casillas negras hay en un tablero?', opciones: ['32', '64', '16', '48'], correcta: 0 },
+      { pregunta: '¿Qué pieza es la más importante en el ajedrez?', opciones: ['Reina', 'Rey', 'Torre', 'Peón'], correcta: 1 }
+    ],
+    passing_score: 6
+  };
+
+  // ---------- VARIABLES GLOBALES ----------
+  let userId = null;
+  let saldoActual = 0;
+  let progreso = {}; // { lessonId: { completed, score, rewarded } }
+  let leccionesCompletadas = 0;
+  let badgeObtenida = false;
+  let evaluacionAprobada = false;
+  let evaluacionCompletada = false; // para no repetir
+
+  const saldoEl = document.getElementById('saldo');
+  const progresoTexto = document.getElementById('progreso-texto');
+  const progressBar = document.getElementById('progress-bar');
+  const leccionesContainer = document.getElementById('lecciones-container');
+  const btnEvaluacion = document.getElementById('btn-evaluacion');
+  const errorEl = document.getElementById('mensaje-error');
+  const badgesContainer = document.getElementById('badges-container');
+
+  // Modal
+  const modal = document.getElementById('modal');
+  const modalCerrar = document.getElementById('modal-cerrar');
+  const modalTitulo = document.getElementById('modal-titulo');
+  const modalCuerpo = document.getElementById('modal-cuerpo');
+
+  // ---------- FUNCIONES AUXILIARES ----------
+  function mostrarError(msg) {
+    errorEl.textContent = msg;
+    setTimeout(() => errorEl.textContent = '', 5000);
+  }
+
+  // ---------- SUPABASE: OBTENER USUARIO Y SALDO ----------
+  async function obtenerUsuarioYSaldo() {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) {
+        errorEl.textContent = '⚠️ Debes iniciar sesión para acceder al curso.';
+        return false;
+      }
+      userId = user.id;
+
+      // Obtener perfil
+      const { data: profile, error: pfError } = await supabase
+        .from('profiles')
+        .select('coins')
+        .eq('id', userId)
+        .single();
+
+      if (pfError && pfError.code === 'PGRST116') {
+        await supabase.from('profiles').insert({ id: userId, coins: 0 });
+        saldoActual = 0;
+      } else if (pfError) {
+        throw pfError;
+      } else {
+        saldoActual = profile?.coins || 0;
+      }
+      saldoEl.textContent = `🪙 ${saldoActual} monedas`;
+      return true;
+    } catch (err) {
+      console.error(err);
+      mostrarError('Error al cargar datos del usuario.');
+      return false;
+    }
+  }
+
+  // ---------- OBTENER PROGRESO DEL USUARIO ----------
+  async function obtenerProgreso() {
+    if (!userId) return;
+    try {
+      const { data, error } = await supabase
+        .from('progress')
+        .select('lesson_id, completed, score, rewarded')
+        .eq('user_id', userId)
+        .in('lesson_id', leccionesData.map(l => l.id));
+
+      if (error) throw error;
+      progreso = {};
+      data.forEach(p => {
+        progreso[p.lesson_id] = { completed: p.completed, score: p.score, rewarded: p.rewarded };
+      });
+      // Completar los que no tienen registro
+      leccionesData.forEach(l => {
+        if (!progreso[l.id]) {
+          progreso[l.id] = { completed: false, score: 0, rewarded: false };
+        }
+      });
+      // Contar completadas
+      leccionesCompletadas = Object.values(progreso).filter(p => p.completed).length;
+    } catch (err) {
+      console.error(err);
+      mostrarError('Error al obtener progreso.');
+    }
+  }
+
+  // ---------- OBTENER INSIGNIAS ----------
+  async function obtenerInsignias() {
+    if (!userId) return;
+    try {
+      const { data, error } = await supabase
+        .from('user_badges')
+        .select('badge_name')
+        .eq('user_id', userId);
+
+      if (error) throw error;
+      const tiene = data.some(b => b.badge_name === 'Primer Ajedrecista');
+      if (tiene) {
+        badgeObtenida = true;
+        badgesContainer.innerHTML = '<span class="badge">🏅 Primer Ajedrecista</span>';
+      } else {
+        badgesContainer.innerHTML = '';
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // ---------- RENDERIZAR LECCIONES ----------
+  function renderizarLecciones() {
+    leccionesContainer.innerHTML = '';
+    let todasCompletadas = true;
+
+    leccionesData.forEach((leccion, index) => {
+      const estado = progreso[leccion.id];
+      const completado = estado?.completed || false;
+      if (!completado) todasCompletadas = false;
+
+      const div = document.createElement('div');
+      div.className = 'leccion';
+      if (completado) div.classList.add('completado');
+      // Bloquear si la lección anterior no está completada (excepto la primera)
+      if (index > 0 && !progreso[leccionesData[index-1].id]?.completed) {
+        div.classList.add('bloqueado');
+      }
+
+      div.innerHTML = `
+        <div class="info">
+          <span class="titulo">${leccion.titulo}</span>
+          <span class="estado ${completado ? 'completado' : (index > 0 && !progreso[leccionesData[index-1].id]?.completed ? 'bloqueado' : '')}">
+            ${completado ? '✅ Completada' : (index > 0 && !progreso[leccionesData[index-1].id]?.completed ? '🔒 Bloqueada' : '📖 Disponible')}
+          </span>
+          <span class="puntos">🪙 ${leccion.puntos}</span>
+        </div>
+        <div class="accion">${completado ? '✔️' : '▶️'}</div>
+      `;
+
+      if (!completado && (index === 0 || progreso[leccionesData[index-1].id]?.completed)) {
+        div.addEventListener('click', () => abrirLeccion(leccion.id));
+      } else if (completado) {
+        // Opcional: ver detalle
+        div.addEventListener('click', () => {
+          alert(`Lección "${leccion.titulo}" completada. Puntos obtenidos: ${leccion.puntos}`);
+        });
+      }
+
+      leccionesContainer.appendChild(div);
+    });
+
+    // Habilitar botón de evaluación si todas completadas
+    if (todasCompletadas && !evaluacionCompletada) {
+      btnEvaluacion.disabled = false;
+    } else {
+      btnEvaluacion.disabled = true;
+    }
+
+    // Actualizar barra de progreso
+    const porcentaje = Math.round((leccionesCompletadas / leccionesData.length) * 100);
+    progressBar.style.width = `${porcentaje}%`;
+    progresoTexto.textContent = `${porcentaje}% completado`;
+  }
+
+  // ---------- ABRIR LECCIÓN (mostrar actividad) ----------
+  async function abrirLeccion(lessonId) {
+    // Obtener la actividad de la lección desde la BD (suponiendo que cada lección tiene una actividad)
+    // En esta demo, crearemos una actividad genérica con una pregunta de la lección.
+    // Idealmente, tendrías una tabla activities con questions.
+    // Como ejemplo, generamos una pregunta por lección.
+    const preguntasEjemplo = [
+      { pregunta: '¿El ajedrez es un juego de estrategia?', opciones: ['Sí', 'No'], correcta: 0 },
+      { pregunta: '¿El tablero tiene 64 casillas?', opciones: ['Verdadero', 'Falso'], correcta: 0 },
+      { pregunta: '¿El rey se puede mover a cualquier casilla?', opciones: ['Sí', 'No'], correcta: 1 },
+      { pregunta: '¿Las torres se mueven en diagonal?', opciones: ['Verdadero', 'Falso'], correcta: 1 },
+      { pregunta: '¿El caballo salta sobre otras piezas?', opciones: ['Sí', 'No'], correcta: 0 },
+      { pregunta: '¿El peón se mueve hacia atrás?', opciones: ['Verdadero', 'Falso'], correcta: 1 },
+      { pregunta: '¿El jaque mate termina la partida?', opciones: ['Sí', 'No'], correcta: 0 },
+      { pregunta: '¿El peón puede coronar al llegar al otro lado?', opciones: ['Verdadero', 'Falso'], correcta: 0 }
+    ];
+    const actividad = preguntasEjemplo[lessonId-1] || { pregunta: 'Pregunta de ejemplo', opciones: ['A', 'B', 'C', 'D'], correcta: 0 };
+
+    // Mostrar modal
+    modalTitulo.textContent = `Lección: ${leccionesData.find(l => l.id === lessonId).titulo}`;
+    modalCuerpo.innerHTML = `
+      <div class="pregunta">
+        <p>${actividad.pregunta}</p>
+        <div class="opciones" id="opciones-actividad">
+          ${actividad.opciones.map((op, i) => `
+            <label>
+              <input type="radio" name="actividad" value="${i}"> ${op}
+            </label>
+          `).join('')}
+        </div>
+      </div>
+      <button class="btn-enviar" id="btn-enviar-actividad">Enviar respuesta</button>
+      <div id="resultado-actividad" class="resultado"></div>
+    `;
+    modal.style.display = 'flex';
+
+    document.getElementById('btn-enviar-actividad').addEventListener('click', async () => {
+      const seleccionado = document.querySelector('input[name="actividad"]:checked');
+      if (!seleccionado) {
+        document.getElementById('resultado-actividad').textContent = 'Selecciona una opción.';
+        return;
+      }
+      const respuesta = parseInt(seleccionado.value);
+      const correcta = actividad.correcta;
+      const aprobado = (respuesta === correcta);
+      const puntaje = aprobado ? 100 : 0; // asumimos 100% si acierta
+      const btn = document.getElementById('btn-enviar-actividad');
+      btn.disabled = true;
+
+      // Llamar a la RPC para otorgar recompensa
+      try {
+        const { data, error } = await supabase.rpc('award_lesson_reward', {
+          p_user_id: userId,
+          p_lesson_id: lessonId,
+          p_score: puntaje,
+          p_passing_score: 100
+        });
+
+        if (error) throw error;
+
+        if (data.success) {
+          document.getElementById('resultado-actividad').innerHTML = `✅ ¡Correcto! Has ganado ${data.points_earned} monedas. Nuevo saldo: ${data.new_coins}`;
+          saldoActual = data.new_coins;
+          saldoEl.textContent = `🪙 ${saldoActual} monedas`;
+          // Actualizar progreso local
+          progreso[lessonId] = { completed: true, score: puntaje, rewarded: true };
+          leccionesCompletadas++;
+          renderizarLecciones();
+          // Cerrar modal después de un momento
+          setTimeout(() => { modal.style.display = 'none'; }, 2000);
+        } else {
+          document.getElementById('resultado-actividad').textContent = `❌ ${data.error || 'No aprobado o ya recompensado.'}`;
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('resultado-actividad').textContent = 'Error al procesar. Intenta de nuevo.';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+
+  // ---------- EVALUACIÓN FINAL ----------
+  btnEvaluacion.addEventListener('click', () => {
+    if (evaluacionCompletada) {
+      alert('Ya completaste la evaluación.');
+      return;
+    }
+    // Mostrar modal con las 10 preguntas
+    modalTitulo.textContent = evaluationData.titulo;
+    let html = `<p>Responde las 10 preguntas. Mínimo ${evaluationData.passing_score} aciertos para aprobar.</p>`;
+    evaluationData.preguntas.forEach((p, idx) => {
+      html += `
+        <div class="pregunta">
+          <p>${idx+1}. ${p.pregunta}</p>
+          <div class="opciones">
+            ${p.opciones.map((op, i) => `
+              <label>
+                <input type="radio" name="eval_${idx}" value="${i}"> ${op}
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+    html += `<button class="btn-enviar" id="btn-enviar-evaluacion">Enviar evaluación</button>
+             <div id="resultado-evaluacion" class="resultado"></div>`;
+    modalCuerpo.innerHTML = html;
+    modal.style.display = 'flex';
+
+    document.getElementById('btn-enviar-evaluacion').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-enviar-evaluacion');
+      btn.disabled = true;
+
+      // Calcular puntaje
+      let aciertos = 0;
+      for (let i = 0; i < evaluationData.preguntas.length; i++) {
+        const selected = document.querySelector(`input[name="eval_${i}"]:checked`);
+        if (selected) {
+          const val = parseInt(selected.value);
+          if (val === evaluationData.preguntas[i].correcta) aciertos++;
+        }
+      }
+
+      // Llamar RPC para evaluación
+      try {
+        const { data, error } = await supabase.rpc('award_evaluation', {
+          p_user_id: userId,
+          p_evaluation_id: evaluationData.id,
+          p_score: aciertos,
+          p_module_id: MODULE_ID
+        });
+
+        if (error) throw error;
+
+        if (data.success) {
+          let msg = `✅ Aprobaste con ${aciertos} aciertos. Ganaste ${data.reward_amount} monedas. Nuevo saldo: ${data.new_coins}`;
+          if (data.bonus_applied) {
+            msg += ' ¡Y recibiste el bono de 50 monedas y la insignia "Primer Ajedrecista"! 🎉';
+            badgeObtenida = true;
+            badgesContainer.innerHTML = '<span class="badge">🏅 Primer Ajedrecista</span>';
+          }
+          document.getElementById('resultado-evaluacion').innerHTML = msg;
+          saldoActual = data.new_coins;
+          saldoEl.textContent = `🪙 ${saldoActual} monedas`;
+          evaluacionCompletada = true;
+          btnEvaluacion.disabled = true;
+          // Cerrar modal después
+          setTimeout(() => { modal.style.display = 'none'; }, 3000);
+        } else {
+          document.getElementById('resultado-evaluacion').textContent = `❌ ${data.error || 'No aprobado. Vuelve a intentarlo.'}`;
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('resultado-evaluacion').textContent = 'Error al procesar evaluación.';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
+
+  // ---------- CERRAR MODAL ----------
+  modalCerrar.addEventListener('click', () => modal.style.display = 'none');
+  window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+  // ---------- INICIALIZAR ----------
+  async function init() {
+    const ok = await obtenerUsuarioYSaldo();
+    if (!ok) return;
+    await obtenerProgreso();
+    await obtenerInsignias();
+    renderizarLecciones();
+  }
+
+  init();
+</script>
+</body>
+</html>
