@@ -1,246 +1,260 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chispa Nica – Ruleta</title>
+  <!-- Importar Supabase y la configuración -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    /* (mismo estilo que antes, solo agregamos un contenedor para monedas) */
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
     body {
       background: linear-gradient(145deg, #0a2f6c 0%, #1a4a8a 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px;
     }
     .container {
       background: rgba(255,255,255,0.95);
-      max-width: 700px;
-      width: 100%;
-      border-radius: 40px;
-      padding: 30px 25px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-      text-align: center;
+      max-width:700px; width:100%; border-radius:40px; padding:30px 25px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.5); text-align:center;
     }
-    h1 {
-      color: #0a2f6c;
-      font-size: 2.2rem;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-    }
-    h1 span { color: #f1c40f; }
-    .sub {
-      color: #1a4a8a;
-      font-weight: 600;
-      margin-bottom: 20px;
-      font-size: 1.1rem;
+    h1 { color:#0a2f6c; font-size:2.2rem; margin-bottom:5px; }
+    h1 span { color:#f1c40f; }
+    .sub { color:#1a4a8a; font-weight:600; margin-bottom:10px; font-size:1.1rem; }
+    .monedas {
+      background:#0a2f6c; color:#fff; padding:8px 20px; border-radius:40px;
+      display:inline-block; font-weight:700; margin-bottom:20px;
     }
     canvas {
-      display: block;
-      margin: 0 auto 20px;
-      width: 100%;
-      max-width: 400px;
-      aspect-ratio: 1/1;
-      background: #fff;
-      border-radius: 50%;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      cursor: pointer;
-      transition: transform 0.2s;
+      display:block; margin:0 auto 20px; width:100%; max-width:400px;
+      aspect-ratio:1/1; background:#fff; border-radius:50%;
+      box-shadow:0 8px 25px rgba(0,0,0,0.3); cursor:pointer;
+      transition:transform 0.2s;
     }
-    canvas:hover { transform: scale(1.02); }
+    canvas:hover { transform:scale(1.02); }
     .btn-girar {
-      background: #f1c40f;
-      border: none;
-      color: #0a2f6c;
-      font-size: 1.5rem;
-      font-weight: 700;
-      padding: 14px 40px;
-      border-radius: 60px;
-      cursor: pointer;
-      box-shadow: 0 6px 0 #b38f0c;
-      transition: all 0.1s ease;
-      margin: 10px 0 20px;
+      background:#f1c40f; border:none; color:#0a2f6c; font-size:1.5rem; font-weight:700;
+      padding:14px 40px; border-radius:60px; cursor:pointer; box-shadow:0 6px 0 #b38f0c;
+      transition:all 0.1s; margin:10px 0 20px;
     }
-    .btn-girar:active {
-      transform: translateY(6px);
-      box-shadow: 0 0 0 #b38f0c;
-    }
-    .btn-girar:disabled {
-      opacity: 0.6;
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #b38f0c;
-      pointer-events: none;
-    }
+    .btn-girar:active { transform:translateY(6px); box-shadow:0 0 0 #b38f0c; }
+    .btn-girar:disabled { opacity:0.6; transform:translateY(4px); box-shadow:0 2px 0 #b38f0c; pointer-events:none; }
     #resultado {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #0a2f6c;
-      min-height: 3.5rem;
-      padding: 10px;
-      background: #eef4ff;
-      border-radius: 30px;
-      margin: 10px 0 20px;
+      font-size:1.8rem; font-weight:700; color:#0a2f6c; min-height:3.5rem;
+      padding:10px; background:#eef4ff; border-radius:30px; margin:10px 0 20px;
     }
     .volver {
-      display: inline-block;
-      margin-top: 15px;
-      color: #0a2f6c;
-      background: #dce5f0;
-      padding: 12px 30px;
-      border-radius: 40px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background 0.2s;
+      display:inline-block; margin-top:15px; color:#0a2f6c; background:#dce5f0;
+      padding:12px 30px; border-radius:40px; text-decoration:none; font-weight:600;
+      transition:background 0.2s;
     }
-    .volver:hover { background: #c0cee0; }
-    .footer { margin-top: 15px; font-size: 0.85rem; color: #4a6a8a; }
+    .volver:hover { background:#c0cee0; }
+    .footer { margin-top:15px; font-size:0.85rem; color:#4a6a8a; }
+    #mensaje-error { color:#e74c3c; margin-top:10px; }
   </style>
 </head>
 <body>
 <div class="container">
   <h1>🎡 <span>Chispa</span> Nica</h1>
   <div class="sub">Ruleta de la Fortuna</div>
+  <div class="monedas" id="saldo">🪙 Cargando...</div>
 
   <canvas id="ruletaCanvas" width="400" height="400"></canvas>
 
   <button class="btn-girar" id="btnGirar">🎲 GIRAR</button>
   <div id="resultado">¡Toca girar!</div>
+  <div id="mensaje-error"></div>
 
-  <a href="/../index.html" class="volver">🏠 Volver al inicio</a>
+  <a href="../index.html" class="volver">🏠 Volver al inicio</a>
   <div class="footer">Chispa Nica – Aprende y gana</div>
 </div>
 
 <script>
-  (function() {
-    const canvas = document.getElementById('ruletaCanvas');
-    const ctx = canvas.getContext('2d');
-    const btn = document.getElementById('btnGirar');
-    const resultado = document.getElementById('resultado');
+  // ---- CONFIGURACIÓN SUPABASE ----
+  const SUPABASE_URL = 'https://tusupabaseurl.supabase.co'; // <-- CAMBIAR
+  const SUPABASE_ANON_KEY = 'tu-anon-key';                // <-- CAMBIAR
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Premios (puedes ajustarlos)
-    const premios = [
-      '10 pts', '20 pts', '50 pts', '100 pts',
-      '¡Bono!', '💀 Perdiste', '🔄 Otra vez', '🎁 Sorpresa'
-    ];
-    const colores = [
-      '#f94144', '#f3722c', '#f8961e', '#f9c74f',
-      '#90be6d', '#43aa8b', '#577590', '#277da1'
-    ];
-    const numSectores = premios.length;
-    const angulo = (2 * Math.PI) / numSectores;
+  // ---- ELEMENTOS ----
+  const saldoEl = document.getElementById('saldo');
+  const resultadoEl = document.getElementById('resultado');
+  const errorEl = document.getElementById('mensaje-error');
+  const btnGirar = document.getElementById('btnGirar');
 
-    let girando = false;
-    let anguloActual = 0; // en radianes
+  let userId = null;
+  let saldoActual = 0;
 
-    function dibujarRuleta(rotacion) {
-      ctx.clearRect(0, 0, 400, 400);
-      const centro = 200, radio = 190;
-
-      for (let i = 0; i < numSectores; i++) {
-        const inicio = i * angulo + rotacion;
-        const fin = inicio + angulo;
-        ctx.beginPath();
-        ctx.moveTo(centro, centro);
-        ctx.arc(centro, centro, radio, inicio, fin);
-        ctx.closePath();
-        ctx.fillStyle = colores[i % colores.length];
-        ctx.fill();
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Texto
-        ctx.save();
-        ctx.translate(centro, centro);
-        ctx.rotate(inicio + angulo / 2);
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 18px "Segoe UI", sans-serif';
-        ctx.shadowColor = 'rgba(0,0,0,0.5)';
-        ctx.shadowBlur = 6;
-        ctx.fillText(premios[i], radio * 0.65, 0);
-        ctx.restore();
+  // ---- OBTENER USUARIO Y SALDO ----
+  async function obtenerUsuarioYSaldo() {
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        errorEl.textContent = '⚠️ Debes iniciar sesión para jugar.';
+        btnGirar.disabled = true;
+        return;
       }
+      userId = user.id;
 
-      // Círculo central
-      ctx.beginPath();
-      ctx.arc(centro, centro, 28, 0, 2 * Math.PI);
-      ctx.fillStyle = '#f1c40f';
-      ctx.fill();
-      ctx.strokeStyle = '#0a2f6c';
-      ctx.lineWidth = 4;
-      ctx.stroke();
-      ctx.fillStyle = '#0a2f6c';
-      ctx.font = 'bold 22px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('★', centro, centro+2);
+      // Obtener perfil
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('coins')
+        .eq('id', userId)
+        .single();
 
-      // Flecha indicadora (arriba)
-      ctx.beginPath();
-      ctx.moveTo(200, 12);
-      ctx.lineTo(190, 28);
-      ctx.lineTo(210, 28);
-      ctx.closePath();
-      ctx.fillStyle = '#e63946';
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-
-    function obtenerPremio(rotacion) {
-      // Normalizar rotación
-      let r = rotacion % (2 * Math.PI);
-      if (r < 0) r += 2 * Math.PI;
-      // La flecha apunta al norte (ángulo -PI/2)
-      const anguloFlecha = -Math.PI / 2;
-      let diff = (anguloFlecha - r + 2 * Math.PI) % (2 * Math.PI);
-      let indice = Math.floor(diff / angulo) % numSectores;
-      return premios[indice];
-    }
-
-    function girarRuleta() {
-      if (girando) return;
-      girando = true;
-      btn.disabled = true;
-      resultado.textContent = '⏳ Girando...';
-
-      const giros = 5 + Math.random() * 5; // entre 5 y 10 vueltas
-      const anguloFinal = giros * 2 * Math.PI + Math.random() * 2 * Math.PI;
-      const duracion = 3000; // ms
-      const inicio = performance.now();
-      const anguloInicial = anguloActual;
-
-      function animar(timestamp) {
-        const elapsed = timestamp - inicio;
-        const progreso = Math.min(elapsed / duracion, 1);
-        // easeOutCubic
-        const ease = 1 - Math.pow(1 - progreso, 3);
-        const rotacion = anguloInicial + anguloFinal * ease;
-        dibujarRuleta(rotacion);
-
-        if (progreso < 1) {
-          requestAnimationFrame(animar);
+      if (profileError) {
+        // Si no existe perfil, lo creamos con 0 monedas
+        if (profileError.code === 'PGRST116') {
+          // insertar perfil
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({ id: userId, coins: 0 });
+          if (insertError) throw insertError;
+          saldoActual = 0;
         } else {
-          anguloActual = (anguloInicial + anguloFinal) % (2 * Math.PI);
-          const premio = obtenerPremio(anguloActual);
-          resultado.innerHTML = `🎉 <strong>${premio}</strong>`;
-          girando = false;
-          btn.disabled = false;
+          throw profileError;
         }
+      } else {
+        saldoActual = profile.coins || 0;
       }
-
-      requestAnimationFrame(animar);
+      saldoEl.textContent = `🪙 ${saldoActual} monedas`;
+    } catch (err) {
+      console.error(err);
+      errorEl.textContent = 'Error al cargar tus datos.';
     }
+  }
 
-    // Dibujo inicial
-    dibujarRuleta(0);
+  // ---- ACTUALIZAR SALDO EN SUPABASE ----
+  async function actualizarSaldo(nuevoSaldo) {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ coins: nuevoSaldo })
+        .eq('id', userId);
+      if (error) throw error;
+      saldoActual = nuevoSaldo;
+      saldoEl.textContent = `🪙 ${saldoActual} monedas`;
+    } catch (err) {
+      console.error(err);
+      errorEl.textContent = 'Error al actualizar monedas.';
+    }
+  }
 
-    btn.addEventListener('click', girarRuleta);
-    // También al hacer clic en el canvas
-    canvas.addEventListener('click', girarRuleta);
-  })();
+  // ---- LÓGICA DE LA RULETA (igual que antes, pero con premios en monedas) ----
+  const premios = [
+    { texto: '10 pts', valor: 10 },
+    { texto: '20 pts', valor: 20 },
+    { texto: '50 pts', valor: 50 },
+    { texto: '100 pts', valor: 100 },
+    { texto: '¡Bono!', valor: 30 },
+    { texto: '💀 Perdiste', valor: -20 },
+    { texto: '🔄 Otra vez', valor: 0 },
+    { texto: '🎁 Sorpresa', valor: 25 }
+  ];
+  const colores = ['#f94144','#f3722c','#f8961e','#f9c74f','#90be6d','#43aa8b','#577590','#277da1'];
+  const numSectores = premios.length;
+  const angulo = (2 * Math.PI) / numSectores;
+  let girando = false;
+  let anguloActual = 0;
+
+  const canvas = document.getElementById('ruletaCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function dibujarRuleta(rotacion) {
+    ctx.clearRect(0,0,400,400);
+    const centro=200, radio=190;
+    for (let i=0; i<numSectores; i++) {
+      const inicio = i*angulo + rotacion;
+      const fin = inicio + angulo;
+      ctx.beginPath();
+      ctx.moveTo(centro, centro);
+      ctx.arc(centro, centro, radio, inicio, fin);
+      ctx.closePath();
+      ctx.fillStyle = colores[i % colores.length];
+      ctx.fill();
+      ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+      ctx.save();
+      ctx.translate(centro, centro);
+      ctx.rotate(inicio + angulo/2);
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillStyle='#fff';
+      ctx.font='bold 16px "Segoe UI", sans-serif';
+      ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=6;
+      ctx.fillText(premios[i].texto, radio*0.65, 0);
+      ctx.restore();
+    }
+    // círculo central
+    ctx.beginPath();
+    ctx.arc(centro, centro, 28, 0, 2*Math.PI);
+    ctx.fillStyle='#f1c40f'; ctx.fill();
+    ctx.strokeStyle='#0a2f6c'; ctx.lineWidth=4; ctx.stroke();
+    ctx.fillStyle='#0a2f6c'; ctx.font='bold 22px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('★', centro, centro+2);
+    // flecha
+    ctx.beginPath();
+    ctx.moveTo(200,12); ctx.lineTo(190,28); ctx.lineTo(210,28); ctx.closePath();
+    ctx.fillStyle='#e63946'; ctx.fill();
+  }
+
+  function obtenerPremio(rotacion) {
+    let r = rotacion % (2*Math.PI);
+    if (r<0) r += 2*Math.PI;
+    const anguloFlecha = -Math.PI/2;
+    let diff = (anguloFlecha - r + 2*Math.PI) % (2*Math.PI);
+    let indice = Math.floor(diff / angulo) % numSectores;
+    return premios[indice];
+  }
+
+  async function girarRuleta() {
+    if (girando || !userId) return;
+    girando = true;
+    btnGirar.disabled = true;
+    resultadoEl.textContent = '⏳ Girando...';
+
+    const giros = 5 + Math.random()*5;
+    const anguloFinal = giros*2*Math.PI + Math.random()*2*Math.PI;
+    const duracion = 3000;
+    const inicio = performance.now();
+    const anguloInicial = anguloActual;
+
+    function animar(timestamp) {
+      const elapsed = timestamp - inicio;
+      const progreso = Math.min(elapsed/duracion, 1);
+      const ease = 1 - Math.pow(1 - progreso, 3);
+      const rotacion = anguloInicial + anguloFinal * ease;
+      dibujarRuleta(rotacion);
+      if (progreso < 1) {
+        requestAnimationFrame(animar);
+      } else {
+        anguloActual = (anguloInicial + anguloFinal) % (2*Math.PI);
+        const premio = obtenerPremio(anguloActual);
+        const valor = premio.valor;
+        const nuevoSaldo = saldoActual + valor;
+        // Mostrar resultado
+        if (valor > 0) {
+          resultadoEl.innerHTML = `🎉 ¡Ganaste <strong>${valor}</strong> monedas! (${premio.texto})`;
+        } else if (valor < 0) {
+          resultadoEl.innerHTML = `😢 Perdiste <strong>${Math.abs(valor)}</strong> monedas. (${premio.texto})`;
+        } else {
+          resultadoEl.innerHTML = `🔄 ${premio.texto} – no sumas ni restas.`;
+        }
+        // Actualizar en Supabase
+        await actualizarSaldo(nuevoSaldo);
+        girando = false;
+        btnGirar.disabled = false;
+      }
+    }
+    requestAnimationFrame(animar);
+  }
+
+  // ---- EVENTOS ----
+  btnGirar.addEventListener('click', girarRuleta);
+  canvas.addEventListener('click', girarRuleta);
+
+  // ---- INICIALIZAR ----
+  dibujarRuleta(0);
+  obtenerUsuarioYSaldo();
 </script>
 </body>
 </html>
